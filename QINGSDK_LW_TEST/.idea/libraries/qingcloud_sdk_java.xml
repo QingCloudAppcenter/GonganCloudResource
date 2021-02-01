@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="qingcloud-sdk-java">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/doc/lib/qingcloud-sdk-java.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
