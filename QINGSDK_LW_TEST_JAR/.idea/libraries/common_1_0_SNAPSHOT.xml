@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="common-1.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/common-1.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/computation-1.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/instance-1.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/qingcloud-sdk-java.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/resource-1.0-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

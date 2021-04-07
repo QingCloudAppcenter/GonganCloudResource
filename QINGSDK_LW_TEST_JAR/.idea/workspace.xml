@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="08cc8f39-189b-439c-b4f3-6646e49815da" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="E:\maven\apache-maven-3.3.3\repo" />
+        <option name="mavenHome" value="E:/maven/apache-maven-3.3.3" />
+        <option name="userSettingsFile" value="E:\maven\apache-maven-3.3.3\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1qntxuy6lKMuuDkXFqrFEHL3oiV" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.1995731" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\IDEA_new\GONGANYUN" />
+      <recent name="E:\IDEA_new\GONGANYUN\QINGSDK_LW_TEST" />
+      <recent name="E:\IDEA_new\GONGANYUN\QINGSDK_LW_TEST\src\main\resources" />
+      <recent name="D:\WorkDirLongWay\project\Idea\QINGSDK\QINGSDK_LW_TEST\lib" />
+      <recent name="D:\WorkDirLongWay\project\Idea\QINGSDK\QINGSDK_LW_TEST\src\main\java\paas" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="JarTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="paas.JarTest" />
+      <module name="QINGSDK_LW_TEST" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="paas.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.JarTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="08cc8f39-189b-439c-b4f3-6646e49815da" name="Default Changelist" comment="" />
+      <created>1617727431692</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1617727431692</updated>
+      <workItem from="1617727435308" duration="7596000" />
+      <workItem from="1617762270876" duration="167000" />
+      <workItem from="1617762457921" duration="11802000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="485" y="114" key="#Project_Structure" timestamp="1617733924732">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state x="485" y="114" key="#Project_Structure/90.0.1830.1080@90.0.1830.1080" timestamp="1617733924732" />
+    <state width="1787" height="462" key="GridCell.Tab.0.bottom" timestamp="1617735106271">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="462" key="GridCell.Tab.0.bottom/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106271" />
+    <state width="1787" height="462" key="GridCell.Tab.0.center" timestamp="1617735106271">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="462" key="GridCell.Tab.0.center/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106271" />
+    <state width="1787" height="462" key="GridCell.Tab.0.left" timestamp="1617735106271">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="462" key="GridCell.Tab.0.left/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106271" />
+    <state width="1787" height="462" key="GridCell.Tab.0.right" timestamp="1617735106271">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="462" key="GridCell.Tab.0.right/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106271" />
+    <state width="1787" height="219" key="GridCell.Tab.1.bottom" timestamp="1617735106266">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="219" key="GridCell.Tab.1.bottom/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106266" />
+    <state width="1787" height="219" key="GridCell.Tab.1.center" timestamp="1617735106266">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="219" key="GridCell.Tab.1.center/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106266" />
+    <state width="1787" height="219" key="GridCell.Tab.1.left" timestamp="1617735106266">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="219" key="GridCell.Tab.1.left/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106266" />
+    <state width="1787" height="219" key="GridCell.Tab.1.right" timestamp="1617735106266">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state width="1787" height="219" key="GridCell.Tab.1.right/90.0.1830.1080@90.0.1830.1080" timestamp="1617735106266" />
+    <state x="485" y="114" key="SettingsEditor" timestamp="1617728702877">
+      <screen x="90" y="0" width="1830" height="1080" />
+    </state>
+    <state x="485" y="114" key="SettingsEditor/90.0.1830.1080@90.0.1830.1080" timestamp="1617728702877" />
+  </component>
+</project>
