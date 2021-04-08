@@ -38,7 +38,9 @@ public class JarTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String constAccessToken = ContextHelper.constAccessToken;
+        // 获取token
+        String constAccessToken =properties.getProperty("constAccessToken");
+        System.out.println("获取token : ***** "+ constAccessToken +" *****");
         // 实例
         if(method.equals("instance")){
             System.out.println("---------  实例  start   ------------");
