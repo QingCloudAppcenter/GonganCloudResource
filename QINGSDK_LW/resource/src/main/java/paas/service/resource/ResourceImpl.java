@@ -13,6 +13,7 @@ import paas.common.utils.DataUtils;
 import paas.common.utils.DateUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -361,7 +362,16 @@ public class ResourceImpl implements IResource{
     @Override
     public ResourceListResponse list(String serviceName, Integer requsetType, String group, String label, String accessToken) {
         ResourceListResponse response = new ResourceListResponse();
+        Integer[] validRequestTypes = new Integer[]{1,2,3,4};
+        List<Integer> list = Arrays.asList(validRequestTypes);
         if(requsetType !=null  && accessToken !=null) {
+            if (!list.contains(requsetType)){
+                response.setErrorCode(1101);
+                response.setErrorMsg("错误的请求类型： " + requsetType);
+                response.setTaskStatus(0);
+                return response;
+            }
+
             EnvContext context = ContextHelper.getEnvContext(accessToken);
             AppService AppService  = new AppService(context);
             AppService.DescribeAppServiceResourcesInput describeAppServiceResourcesInput = new AppService.DescribeAppServiceResourcesInput();

@@ -78,7 +78,8 @@ public class JarTest {
             // 删除
             else if(args[1].equals("delete")){
                 System.out.println("------进入 deleteInstance删除实例方法------");
-                System.out.println("请求参数 ："+"deleteInstanceId:"+ properties.getProperty("deleteInstanceId"));
+                System.out.println("请求参数 ："+"deleteInstanceId:"+ properties.getProperty("deleteInstanceId")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 InstanceDeleteResponse delete = instance.delete(properties.getProperty("deleteInstanceId"),constAccessToken);
                 System.out.println("------------------------");
                 System.out.println("taskStatus=" + delete.getTaskStatus());
@@ -92,6 +93,7 @@ public class JarTest {
                 System.out.println("------进入 listInstance 查询实例方法------");
                 System.out.println("请求参数 ："+
                         "serviceType:"+ properties.getProperty("instanceServiceType")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken")+
                         ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 InstanceListResponse listresponse = instance.list(properties.getProperty("instanceServiceType"),constAccessToken);
                 System.out.println("response: ------------------------");
@@ -106,6 +108,7 @@ public class JarTest {
                 System.out.println("------进入 queryInstance 查询实例方法------");
                 System.out.println("请求参数 ："+
                         "instanceId:"+ properties.getProperty("queryInstanceId")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken")+
                         ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 InstanceQueryResponse queryresponse = instance.query(properties.getProperty("queryInstanceId"),constAccessToken);
                 System.out.println("response: ------------------------");
@@ -129,7 +132,8 @@ public class JarTest {
                         ",\ninstanceServiceName:"+ properties.getProperty("modifyInstanceServiceName")+
                         ",\nserviceManagerURLs:"+properties.getProperty("modifyServiceManagerURLs")+
                         ",\nserviceAPIUrls:"+properties.getProperty("modifyServiceAPIUrls")+
-                        ",\nnodes:"+ Integer.valueOf(properties.getProperty("modifyNodes")));
+                        ",\nnodes:"+ Integer.valueOf(properties.getProperty("modifyNodes"))+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
 
                 InstanceModifyResponse modify = instance.modify(properties.getProperty("modifyInstanceId"),
                         properties.getProperty("modifyInstanceServiceName"),
@@ -154,14 +158,15 @@ public class JarTest {
                 System.out.println("------进入 register服务资源注册方法------");
                 System.out.println("请求参数 ："+"serviceName:"+
                                 properties.getProperty("serviceName")+
-                        ",serviceProvider:"+ properties.getProperty("serviceProvider")+
-                        ",location:"+properties.getProperty("location")+
-                        ",requsetType:"+Integer.valueOf(properties.getProperty("requsetType"))+
-                        ",version:"+ properties.getProperty("version")+
-                        ",group:"+ properties.getProperty("group")+
-                        ",label:"+  properties.getProperty("label")+
-                        ",url:"+ properties.getProperty("url")+
-                        " ,docDir:"+ properties.getProperty("docDir"));
+                        ",\nserviceProvider:"+ properties.getProperty("serviceProvider")+
+                        ",\nlocation:"+properties.getProperty("location")+
+                        ",\nrequsetType:"+Integer.valueOf(properties.getProperty("requsetType"))+
+                        ",\nversion:"+ properties.getProperty("version")+
+                        ",\ngroup:"+ properties.getProperty("group")+
+                        ",\nlabel:"+  properties.getProperty("label")+
+                        ",\nurl:"+ properties.getProperty("url")+
+                        ",\ndocDir:"+ properties.getProperty("docDir")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 ResourceRegisterResponse response =  resourceTest.register(
                         properties.getProperty("serviceName"),
                         properties.getProperty("serviceProvider"),
@@ -173,74 +178,79 @@ public class JarTest {
                         properties.getProperty("url"),
                         properties.getProperty("docDir"),
                         constAccessToken);
-                System.out.println("------------------------"); // 任务执行状态 taskStatus 是 1 表示成功，0 表示失败
-                System.out.println("response.taskStatus=" + response.getTaskStatus());
-                System.out.println("response.serviceId=" + response.getServiceId());
-                System.out.println("response.errorMsg="+ response.getErrorMsg());
-                System.out.println("response.errorCode=" + response.getErrorCode());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus=" + response.getTaskStatus());
+                System.out.println("serviceId=" + response.getServiceId());
+                System.out.println("errorMsg="+ response.getErrorMsg());
+                System.out.println("errorCode=" + response.getErrorCode());
                 System.out.println("------------------------");
             } // publish服务资源发布
             else if(args[1].equals("publish")){
                 System.out.println("------进入 publish服务资源发布方法------");
-                System.out.println("请求参数 ："+"serviceId:"+ properties.getProperty("publishServiceId"));
+                System.out.println("请求参数 ："+
+                        "serviceId:"+ properties.getProperty("commonServiceId")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 ResourcePublishResponse response = resourceTest.publish(properties.getProperty("publishServiceId"),constAccessToken);
                 //  任务执行状态 taskStatus 是 1 表示成功，0 表示失败
-                System.out.println("------------------------");
-                System.out.println("response.taskStatus=" + response.getTaskStatus());
-                System.out.println("response.serviceId=" + response.getServiceId());
-                System.out.println("response.errorMsg="+ response.getErrorMsg());
-                System.out.println("response.errorCode=" + response.getErrorCode());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus=" + response.getTaskStatus());
+                System.out.println("serviceId=" + response.getServiceId());
+                System.out.println("errorMsg="+ response.getErrorMsg());
+                System.out.println("errorCode=" + response.getErrorCode());
                 System.out.println("------------------------");
 
             } // revoke  撤销
             else if(args[1].equals("revoke")){
                 System.out.println("------进入 revoke  撤销方法------");
+                System.out.println("请求参数 ："+
+                        "serviceId:"+ properties.getProperty("commonServiceId")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 ResourceRevokeResponse response  = resourceTest.revoke(properties.getProperty("revokeServiceId"), constAccessToken);
-                System.out.println("------------------------");
-                System.out.println("response.taskStatus=" + response.getTaskStatus());
-                System.out.println("response.serviceId=" + response.getServiceId());
-                System.out.println("response.errorMsg="+ response.getErrorMsg());
-                System.out.println("response.errorCode=" + response.getErrorCode());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus=" + response.getTaskStatus());
+                System.out.println("serviceId=" + response.getServiceId());
+                System.out.println("errorMsg="+ response.getErrorMsg());
+                System.out.println("errorCode=" + response.getErrorCode());
                 System.out.println("------------------------");
             } // query 查询
             else if(args[1].equals("query")){
                 System.out.println("------进入  query 查询方法------");
+                System.out.println("请求参数 ："+
+                        "serviceId:"+ properties.getProperty("commonServiceId")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 ResourceQueryResponse response =  resourceTest.query(properties.getProperty("queryServiceId"), constAccessToken);
-                System.out.println("------------------------");
-                if(response.getTaskStatus()==1){
-                    System.out.println("response.TaskStatus= "+response.getTaskStatus());
-                    System.out.println("response.ServiceId= "+response.getServiceId());
-                    System.out.println("response.serviceName= "+response.getServiceName());
-                    System.out.println("response.serviceProvider= "+response.getServiceProvider());
-                    System.out.println("response.location= "+response.getLocation());
-                    System.out.println("response.requsetType= "+response.getRequsetType());
-                    System.out.println("response.version= "+response.getVersion());
-                    System.out.println("response.group= "+response.getGroup());
-                    System.out.println("response.label= "+response.getLabel());
-                    System.out.println("response.url= "+response.getUrl());
-                    System.out.println("response.docDir= "+response.getDocDir());
-                    System.out.println("response.releaseTime="+response.getReleaseTime());
-                    System.out.println("response.serviceStatus= "+response.getServiceStatus());
-                }else{
-                    System.out.println("response.taskStatus=" + response.getTaskStatus());
-                    System.out.println("response.errorMsg="+ response.getErrorMsg());
-                    System.out.println("response.errorCode=" + response.getErrorCode());
-                }
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus= "+response.getTaskStatus());
+                System.out.println("serviceId= "+response.getServiceId());
+                System.out.println("serviceName= "+response.getServiceName());
+                System.out.println("serviceProvider= "+response.getServiceProvider());
+                System.out.println("location= "+response.getLocation());
+                System.out.println("requsetType= "+response.getRequsetType());
+                System.out.println("version= "+response.getVersion());
+                System.out.println("group= "+response.getGroup());
+                System.out.println("label= "+response.getLabel());
+                System.out.println("url= "+response.getUrl());
+                System.out.println("docDir= "+response.getDocDir());
+                System.out.println("releaseTime="+response.getReleaseTime());
+                System.out.println("serviceStatus= "+response.getServiceStatus());
+                System.out.println("errorMsg="+ response.getErrorMsg());
+                System.out.println("errorCode=" + response.getErrorCode());
                 System.out.println("------------------------");
             } // modify 修改
             else if(args[1].equals("modify")){
                 System.out.println("------进入 modify 修改方法------");
                 System.out.println("请求参数 ："+
-                        "ServiceId:"+ properties.getProperty("modifyServiceId")+
-                        "serviceName:"+ properties.getProperty("modifyServiceName")+
-                        ",serviceProvider:"+ properties.getProperty("modifyServiceProvider")+
-                        ",location:"+properties.getProperty("modifyLocation")+
-                        ",version:"+ properties.getProperty("modifyVersion")+
-                        ",group:"+ properties.getProperty("modifyGroup")+
-                        ",label:"+  properties.getProperty("modifyLabel")+
-                        ",url:"+ properties.getProperty("modifyUrl")+
-                        " ,docDir:"+ properties.getProperty("modifyDocDir")+
-                        " ,ServiceStatus:"+ properties.getProperty("modifyServiceStatus"));
+                        "serviceId:"+ properties.getProperty("commonServiceId")+
+                        ",\nserviceName:"+ properties.getProperty("modifyServiceName")+
+                        ",\nserviceProvider:"+ properties.getProperty("modifyServiceProvider")+
+                        ",\nlocation:"+properties.getProperty("modifyLocation")+
+                        ",\nversion:"+ properties.getProperty("modifyVersion")+
+                        ",\ngroup:"+ properties.getProperty("modifyGroup")+
+                        ",\nlabel:"+  properties.getProperty("modifyLabel")+
+                        ",\nurl:"+ properties.getProperty("modifyUrl")+
+                        ",\ndocDir:"+ properties.getProperty("modifyDocDir")+
+                        ",\nserviceStatus:"+ properties.getProperty("modifyServiceStatus")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 ResourceModifyResponse response =   resourceTest.modify(properties.getProperty("modifyServiceId"),
                          properties.getProperty("modifyServiceName"),
                          properties.getProperty("modifyServiceProvider"),
@@ -252,40 +262,44 @@ public class JarTest {
                          properties.getProperty("modifyDocDir"),
                          Integer.valueOf(properties.getProperty("modifyServiceStatus")),
                          constAccessToken);
-                System.out.println("------------------------");
-                System.out.println("TaskStatus: "+response.getTaskStatus());
-                System.out.println("ErrorCode :"+response.getErrorCode());
-                System.out.println("ErrorMsg : " +response.getErrorMsg());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus: "+response.getTaskStatus());
+                System.out.println("errorCode :"+response.getErrorCode());
+                System.out.println("errorMsg : " +response.getErrorMsg());
                 System.out.println("------------------------");
             } // unregister 注销
             else if(args[1].equals("unregister")){
                 System.out.println("------进入unregister注销方法------");
-                System.out.println("请求参数 ："+"serviceId:"+ properties.getProperty("unregisterServiceId"));
+                System.out.println("请求参数 ："+
+                        "serviceId:"+ properties.getProperty("commonServiceId")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 ResourceUnregisterResponse response =  resourceTest.unregister(properties.getProperty("unregisterServiceId"),constAccessToken);
-                System.out.println("------------------------");
-                System.out.println("TaskStatus: "+response.getTaskStatus());
-                System.out.println("ErrorCode :"+response.getErrorCode());
-                System.out.println("ErrorMsg : " +response.getErrorMsg());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus: "+response.getTaskStatus());
+                System.out.println("errorCode :"+response.getErrorCode());
+                System.out.println("errorMsg : " +response.getErrorMsg());
                 System.out.println("------------------------");
             } // list 集合查询
             else if(args[1].equals("list")){
                 System.out.println("------进入list集合查询---");
-                System.out.println("请求参数 ："+"serviceName:"+
-                        properties.getProperty("list.serviceName")+
-                        ",requsetType:"+Integer.valueOf(properties.getProperty("list.requsetType"))+
-                        ",group:"+ properties.getProperty("list.group")+
-                        ",label:"+  properties.getProperty("list.label"));
+                System.out.println("请求参数 ："+
+                        "serviceName:"+ properties.getProperty("list.serviceName")+
+                        ",\nrequsetType:"+Integer.valueOf(properties.getProperty("list.requsetType"))+
+                        ",\ngroup:"+ properties.getProperty("list.group")+
+                        ",\nlabel:"+  properties.getProperty("list.label")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 ResourceListResponse response = resourceTest.list(
                         properties.getProperty("list.serviceName"),
                         Integer.valueOf(properties.getProperty("list.requsetType")),
                         properties.getProperty("list.group"),
                         properties.getProperty("list.label"),constAccessToken);
-                if(response.getServiceList()!=null){
-                    System.out.println("ServiceList: "+response.getServiceList().toString());
-                }
-                System.out.println("TaskStatus: "+response.getTaskStatus());
-                System.out.println("ErrorCode :"+response.getErrorCode());
-                System.out.println("ErrorMsg : " +response.getErrorMsg());
+                System.out.println("response: ------------------------");
+                System.out.println("serviceList: "+response.getServiceList());
+                System.out.println("taskStatus: "+response.getTaskStatus());
+                System.out.println("errorCode :"+response.getErrorCode());
+                System.out.println("errorMsg : " +response.getErrorMsg());
+                System.out.println("------------------------");
+
             }
         }
     }
