@@ -79,9 +79,11 @@ public class InstanceImpl implements IInstance {
                 TagService.DescribeTagsOutput describeTagsOutput = tagService.describeTags(describeTagsInput);
                 TagService.AttachTagsInput attachTagsInput = new TagService.AttachTagsInput();
                 Types.ResourceTagPairModel resourceTagPairModel = new Types.ResourceTagPairModel();
+                resourceTagPairModel.setResourceType("cluster");
                 resourceTagPairModel.setResourceID(deployAppVersionOutput.getClusterID());
                 resourceTagPairModel.setTagID(describeTagsOutput.getTagSet().get(0).getTagID());
                 ArrayList<Types.ResourceTagPairModel> ResourceTagPairModelList = new ArrayList<>();
+                ResourceTagPairModelList.add(resourceTagPairModel);
                 attachTagsInput.setResourceTagPairs(ResourceTagPairModelList);
                 TagService.AttachTagsOutput attachTagsOutput = tagService.attachTags(attachTagsInput);
                 logger.info("01001、02001、02003  三种服务实例tag 标记成功");
