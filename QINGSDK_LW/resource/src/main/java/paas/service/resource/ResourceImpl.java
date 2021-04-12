@@ -248,7 +248,8 @@ public class ResourceImpl implements IResource{
      */
 
     @Override
-    public ResourceModifyResponse modify(String serviceId, String serviceName, String serviceProvider, String location, String version, String group, String label, String url, String docDir, Integer serviceStatus, String accessToken) {
+    public ResourceModifyResponse modify(String serviceId, String serviceName, String serviceProvider, String location,
+                                         String version, String group, String label, String url, String docDir, Integer serviceStatus, String accessToken) {
         ResourceModifyResponse response = new ResourceModifyResponse();
         if (serviceId !=null  && accessToken !=null){
             // 判断 location 是否合法
@@ -317,7 +318,7 @@ public class ResourceImpl implements IResource{
         ResourceUnregisterResponse response = new ResourceUnregisterResponse();
         //获取EnvContent的参数内容
         if(serviceId !=null && accessToken !=null) {
-            EnvContext context = ContextHelper.getEnvContext(ContextHelper.constAccessToken);
+            EnvContext context = ContextHelper.getEnvContext(accessToken);
             AppService AppService = new AppService(context);
             AppService.UnregisterAppServiceResourceInput unregisterAppServiceResourceInput = new AppService.UnregisterAppServiceResourceInput();
             unregisterAppServiceResourceInput.setServiceID(serviceId);
