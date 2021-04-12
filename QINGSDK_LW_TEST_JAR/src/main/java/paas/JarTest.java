@@ -32,6 +32,7 @@ public class JarTest {
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new FileReader(jarTest.getPath()+"/config.properties"));
+            System.out.println(jarTest.getPath()+"/config.properties");
             properties.load(bufferedReader);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -47,14 +48,15 @@ public class JarTest {
             // createInstance 创建
             if(args[1].equals("create")){
                 System.out.println("------进入 createInstance 创建实例方法------");
-                System.out.println("请求参数 ："+"createServiceType:"+
-                        properties.getProperty("createServiceType")+
-                        ",createServiceName:"+ properties.getProperty("createServiceName")+
-                        ",createCompute:"+properties.getProperty("createCompute")+
-                        ",createCpuCores:"+Integer.valueOf(properties.getProperty("createCpuCores"))+
-                        ",createMemory:"+ properties.getProperty("createMemory")+
-                        ",createStorage:"+ properties.getProperty("createStorage")+
-                        ",createNodes:"+  properties.getProperty("createNodes"));
+                System.out.println("请求参数 ："+
+                        "serviceType:"+ properties.getProperty("createServiceType")+
+                        ",\nserviceName:"+ properties.getProperty("createServiceName")+
+                        ",\ncompute:"+properties.getProperty("createCompute")+
+                        ",\ncpuCores:"+Integer.valueOf(properties.getProperty("createCpuCores"))+
+                        ",\nmemory:"+ properties.getProperty("createMemory")+
+                        ",\nstorage:"+ properties.getProperty("createStorage")+
+                        ",\nnodes:"+  properties.getProperty("createNodes")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 InstanceCreateResponse response = instance.create(
                         properties.getProperty("createServiceType"),
                         properties.getProperty("createServiceName"),
@@ -64,13 +66,13 @@ public class JarTest {
                         Integer.valueOf(properties.getProperty("createStorage")),
                         Integer.valueOf(properties.getProperty("createNodes")),
                         constAccessToken);
-                System.out.println("------------------------");
-                System.out.println("response.taskStatus=" + response.getTaskStatus());
-                System.out.println("response.errorMsg="+ response.getErrorMsg());
-                System.out.println("response.errorCode=" + response.getErrorCode());
-                System.out.println("response.ServiceManageUrls=" + response.getServiceManageUrls());
-                System.out.println("response.ServiceAPIUrls=" + response.getServiceAPIUrls());
-                System.out.println("response.InstanceId=" + response.getInstanceId());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus=" + response.getTaskStatus());
+                System.out.println("errorMsg="+ response.getErrorMsg());
+                System.out.println("errorCode=" + response.getErrorCode());
+                System.out.println("serviceManageUrls=" + response.getServiceManageUrls());
+                System.out.println("serviceAPIUrls=" + response.getServiceAPIUrls());
+                System.out.println("instanceId=" + response.getInstanceId());
                 System.out.println("------------------------");
             }
             // 删除
@@ -79,62 +81,66 @@ public class JarTest {
                 System.out.println("请求参数 ："+"deleteInstanceId:"+ properties.getProperty("deleteInstanceId"));
                 InstanceDeleteResponse delete = instance.delete(properties.getProperty("deleteInstanceId"),constAccessToken);
                 System.out.println("------------------------");
-                System.out.println("response.taskStatus=" + delete.getTaskStatus());
-                System.out.println("response.errorMsg="+ delete.getErrorMsg());
-                System.out.println("response.errorCode=" + delete.getErrorCode());
+                System.out.println("taskStatus=" + delete.getTaskStatus());
+                System.out.println("errorMsg="+ delete.getErrorMsg());
+                System.out.println("errorCode=" + delete.getErrorCode());
+                System.out.println("instanceId=" + delete.getInstanceId());
                 System.out.println("------------------------");
             }
             // 查询 list
             else if(args[1].equals("list")){
                 System.out.println("------进入 listInstance 查询实例方法------");
-                System.out.println("请求参数 ："+"serviceType:"+ properties.getProperty("instanceServiceType"));
+                System.out.println("请求参数 ："+
+                        "serviceType:"+ properties.getProperty("instanceServiceType")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 InstanceListResponse listresponse = instance.list(properties.getProperty("instanceServiceType"),constAccessToken);
-                System.out.println("------------------------");
-                System.out.println("response.taskStatus=" + listresponse.getTaskStatus());
-                System.out.println("response.errorMsg="+ listresponse.getErrorMsg());
-                System.out.println("response.serviceList=" + listresponse.getServiceList());
-                System.out.println("response.errorCode=" + listresponse.getErrorCode());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus=" + listresponse.getTaskStatus());
+                System.out.println("errorMsg="+ listresponse.getErrorMsg());
+                System.out.println("serviceList=" + listresponse.getServiceList());
+                System.out.println("errorCode=" + listresponse.getErrorCode());
                 System.out.println("------------------------");
             }
             // 查询 query
             else if(args[1].equals("query")){
                 System.out.println("------进入 queryInstance 查询实例方法------");
-                InstanceQueryResponse queryresponse =   instance.query(properties.getProperty("qureyInstanceid"),constAccessToken);
-                System.out.println("------------------------");
-                System.out.println("response.taskStatus="+ queryresponse.getTaskStatus());
-                System.out.println("response.serviceType="+ queryresponse.getServiceType());
-                System.out.println("response.errorMsg="+ queryresponse.getErrorMsg());
-                System.out.println("response.healthStatus=" + queryresponse.getHealthStatus());
-                System.out.println("response.compute=" + queryresponse.getCompute());
-                System.out.println("response.cpuCores=" + queryresponse.getCpuCores());
-                System.out.println("response.memory=" + queryresponse.getMemory());
-                System.out.println("response.storage=" + queryresponse.getStorage());
-                System.out.println("response.nodes=" + queryresponse.getNodes());
-                System.out.println("response.serviceManageUrls=" + queryresponse.getServiceManageUrls());
-                System.out.println("response.serviceAPIUrls=" + queryresponse.getServiceAPIUrls());
-                System.out.println("response.errorCode=" +queryresponse.getErrorCode());
+                System.out.println("请求参数 ："+
+                        "instanceId:"+ properties.getProperty("queryInstanceId")+
+                        ",\naccessToken:"+ properties.getProperty("constAccessToken"));
+                InstanceQueryResponse queryresponse = instance.query(properties.getProperty("queryInstanceId"),constAccessToken);
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus="+ queryresponse.getTaskStatus());
+                System.out.println("serviceType="+ queryresponse.getServiceType());
+                System.out.println("healthStatus=" + queryresponse.getHealthStatus());
+                System.out.println("compute=" + queryresponse.getCompute());
+                System.out.println("cpuCores=" + queryresponse.getCpuCores());
+                System.out.println("memory=" + queryresponse.getMemory());
+                System.out.println("storage=" + queryresponse.getStorage());
+                System.out.println("nodes=" + queryresponse.getNodes());
+                System.out.println("serviceManageUrls=" + queryresponse.getServiceManageUrls());
+                System.out.println("serviceAPIUrls=" + queryresponse.getServiceAPIUrls());
+                System.out.println("errorMsg="+ queryresponse.getErrorMsg());
+                System.out.println("errorCode=" +queryresponse.getErrorCode());
                 System.out.println("------------------------");
             }// 修改
             else if(args[1].equals("modify")){
                 System.out.println("请求参数 ："
-                        +"InstanceId:"+  properties.getProperty("modifyInstanceId")+
-                        ",InstanceServiceName:"+ properties.getProperty("modifyInstanceServiceName")+
-                        ",ServiceManagerURLs:"+properties.getProperty("modifyServiceManagerURLs")+
-                        ",ServiceAPIUrls:"+Integer.valueOf(properties.getProperty("modifyServiceAPIUrls"))+
-                        ",Nodes:"+ properties.getProperty("modifyNodes")+
-                        ",MainRole:"+ properties.getProperty("modifyMainRole"));
+                        +"instanceId:"+  properties.getProperty("modifyInstanceId")+
+                        ",\ninstanceServiceName:"+ properties.getProperty("modifyInstanceServiceName")+
+                        ",\nserviceManagerURLs:"+properties.getProperty("modifyServiceManagerURLs")+
+                        ",\nserviceAPIUrls:"+properties.getProperty("modifyServiceAPIUrls")+
+                        ",\nnodes:"+ Integer.valueOf(properties.getProperty("modifyNodes")));
 
                 InstanceModifyResponse modify = instance.modify(properties.getProperty("modifyInstanceId"),
                         properties.getProperty("modifyInstanceServiceName"),
                         properties.getProperty("modifyServiceManagerURLs"),
                         properties.getProperty("modifyServiceAPIUrls"),
                         Integer.valueOf(properties.getProperty("modifyNodes")),
-                        properties.getProperty("modifyMainRole"),
                         constAccessToken);
-                System.out.println("------------------------");
-                System.out.println("response.taskStatus=" + modify.getTaskStatus());
-                System.out.println("response.errorMsg="+ modify.getErrorMsg());
-                System.out.println("response.errorCode=" + modify.getErrorCode());
+                System.out.println("response: ------------------------");
+                System.out.println("taskStatus=" + modify.getTaskStatus());
+                System.out.println("errorMsg="+ modify.getErrorMsg());
+                System.out.println("errorCode=" + modify.getErrorCode());
                 System.out.println("------------------------");
 
             }

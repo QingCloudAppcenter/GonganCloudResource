@@ -36,7 +36,7 @@ public interface IInstance {
      * @return
      */
     public InstanceModifyResponse modify(String instanceId, String serviceName, String
-            serviceManagerURLs, String serviceAPIUrls, int nodes,String mainRole, String accessToken);
+            serviceManagerURLs, String serviceAPIUrls, int nodes, String accessToken);
 
     /**
      * 获取服务实例列表(list)

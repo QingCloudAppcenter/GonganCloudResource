@@ -115,7 +115,7 @@ public class InstanceOperTest {
     public void modifyInstance(){
 
         InstanceImpl instance = new InstanceImpl();// cl-3vfp0usy cl-19ufpdkb  cl-wb9pvvjc cl-721rfhc8 cl-znco0nwb  cl-byu6bxkg cl-w3q50eqx cl-hkisu3x1
-        InstanceModifyResponse modify = instance.modify("cl-pktza80m","Storm1","","",2,"slave" ,ContextHelper.constAccessToken);
+        InstanceModifyResponse modify = instance.modify("cl-pktza80m","Storm1","","",2, ContextHelper.constAccessToken);
         logger.info("------------------------");
         System.out.println("response.taskStatus=" + modify.getTaskStatus());
         System.out.println("response.errorMsg="+ modify.getErrorMsg());

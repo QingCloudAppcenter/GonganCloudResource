@@ -412,11 +412,11 @@ public class InstanceImpl implements IInstance {
     }
 
     @Override
-    public InstanceModifyResponse modify(String instanceId, String serviceName, String serviceManagerURLs, String serviceAPIUrls, int nodes, String mainRole,String accessToken) {
+    public InstanceModifyResponse modify(String instanceId, String serviceName, String serviceManagerURLs, String serviceAPIUrls, int nodes, String accessToken) {
         InstanceModifyResponse response =new InstanceModifyResponse();
         EnvContext context = ContextHelper.getEnvContext(accessToken);
         ClusterService clusterService =null;
-        if(serviceName !=null && accessToken !=null){
+        if(serviceName !=null && accessToken !=null) {
             clusterService = new ClusterService(context);
             ClusterService.ModifyClusterAttributesInput modifyClusterAttributesInput = new ClusterService.ModifyClusterAttributesInput();
             modifyClusterAttributesInput.setCluster(instanceId);
@@ -449,18 +449,114 @@ public class InstanceImpl implements IInstance {
             response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
             return response;
         }
+
+        SimpleClusterService simpleClusterService = new SimpleClusterService(context);
+
+        SimpleClusterService.DescribeClustersInput describeClustersInput = new SimpleClusterService.DescribeClustersInput();
+        List clustersList = new ArrayList<String>();
+        clustersList.add(instanceId);
+        describeClustersInput.setClusters(clustersList);
+        describeClustersInput.setVerbose(1);
+        describeClustersInput.setStatus("active");
+        SimpleClusterService.DescribeClustersOutput output = null;
+        try {
+            output = simpleClusterService.describeClusters(describeClustersInput);
+        } catch (QCException e) {
+            logger.error("程序错误"+e.getMessage());
+            response.setErrorCode(0);
+            response.setTaskStatus(5000);
+            response.setErrorMsg("程序错误"+e.getMessage());
+            return response;
+        }
+        /**青云接口异常情况处理 */
+        if(output == null || output.getRetCode() != 0){
+            logger.info("服务实例唯一标识或用户令牌 不可为空");
+            response.setTaskStatus(5000);
+            response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
+            response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
+            return response;
+        }
+
+        /**从output中获取服务实例集合**/
+        List<Types.SimpleClusterModel> clusterModelList = output.getClusterSet();
+
+        /**异常情况处理 */
+        if(clusterModelList == null || clusterModelList.size() == 0){
+            logger.info("服务实例唯一标识或用户令牌 不可为空");
+            response.setTaskStatus(5000);
+            response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
+            response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
+            return response;
+        }
+        /**从集合中获取clusterModel**/
+        Types.SimpleClusterModel clusterModel = clusterModelList.get(0);
+        String serviceType;
+
+        /** 01 获取服务类型 **/
+        if(clusterModel.getAppVersion().equals("appv-v71be1fi")){
+            /**异常情况处理 */
+            if(clusterModel == null || clusterModel.getTags() == null  || clusterModel.getTags().size() == 0){
+                logger.info("服务实例唯一标识或用户令牌 不可为空");
+                response.setTaskStatus(5000);
+                response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
+                response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
+                return response;
+            }
+            serviceType = clusterModel.getTags().get(0).get("tag_name").toString();
+        }else{
+            /**异常情况处理 */
+            if(!ParaConstant.Q2G_SERVICETYPEMAP.containsKey(clusterModel.getAppVersion())||
+                    ParaConstant.Q2G_SERVICETYPEMAP.get(clusterModel.getAppVersion()) == null ){
+                logger.info("服务实例唯一标识或用户令牌 不可为空");
+                response.setTaskStatus(5000);
+                response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
+                response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
+                return response;
+            }
+            serviceType = ParaConstant.Q2G_SERVICETYPEMAP.get(clusterModel.getAppVersion());
+        }
+        logger.info("服务类型："+serviceType);
+
+        /**异常情况处理 */
+        if(!ParaConstant.SERVICETYPE_MAINROLE_MAP.containsKey(serviceType)||
+                ParaConstant.SERVICETYPE_MAINROLE_MAP.get(serviceType) == null ){
+            logger.info("服务实例唯一标识或用户令牌 不可为空");
+            response.setTaskStatus(5000);
+            response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
+            response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
+            return response;
+        }
+        String mainRole = ParaConstant.SERVICETYPE_MAINROLE_MAP.get(serviceType);
+        logger.info("主角色：" + mainRole);
+        List<Types.SimpleClusterNodeModel> clusterNodeModelList= clusterModel.getNodes();
+        /**异常情况处理 */
+        if(clusterNodeModelList == null || clusterNodeModelList.size() == 0){
+            logger.info("服务实例唯一标识或用户令牌 不可为空");
+            response.setTaskStatus(5000);
+            response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
+            response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
+            return response;
+        }
+        int originCount = 0;
+        for(Types.SimpleClusterNodeModel clusterNodeModel : clusterNodeModelList){
+            String role = clusterNodeModel.getRole();
+            /**获取主角色的CPU、内存、磁盘规格，并计算出计算规格*/
+            if(role.equals(mainRole)) {
+                originCount = originCount + 1;
+            }
+        }
        //添加节点
-        if(nodes >0 || mainRole!=null){
+        if(nodes > originCount){
             try {
                 ClusterService.AddClusterNodesInput addClusterNodesInput = new ClusterService.AddClusterNodesInput();
                 addClusterNodesInput.setCluster(instanceId);
-                addClusterNodesInput.setNodeCount(nodes);
+                addClusterNodesInput.setNodeCount(nodes-originCount);
                 addClusterNodesInput.setNodeRole(mainRole);
-                ClusterService.AddClusterNodesOutput output = clusterService.addClusterNodes(addClusterNodesInput);
-                if (output.getMessage()!=null){
+                ClusterService.AddClusterNodesOutput addOutput = clusterService.addClusterNodes(addClusterNodesInput);
+                if (addOutput.getMessage()!=null){
                     logger.debug("服务实例添加节点发步失败！！！");
-                    response.setErrorCode(output.getRetCode());
-                    response.setErrorMsg(output.getMessage());
+                    response.setErrorCode(addOutput.getRetCode());
+                    response.setErrorMsg(addOutput.getMessage());
                     response.setTaskStatus(0);
                     return response;
                 }
@@ -468,7 +564,7 @@ public class InstanceImpl implements IInstance {
                 JobService.DescribeJobsOutput describeJobsOutput =null;
                 String status ="pending";
                 //根据任务id查询创建进度
-                String jobID = output.getJobID();
+                String jobID = addOutput.getJobID();
                 logger.info("任务id查询创建节点进度,任务id为："+jobID);
                 List jobIDList = new ArrayList<String>();
                 jobIDList.add(jobID);
