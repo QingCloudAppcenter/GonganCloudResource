@@ -14,16 +14,30 @@ import paas.entity.CreateConf;
 import paas.entity.CreateConfParam;
 import paas.entity.MachineConf;
 
+import java.io.IOException;
 import java.util.*;
 
 public class InstanceImpl implements IInstance {
 
     private Logger logger = LoggerFactory.getLogger(InstanceImpl.class);
+    private ArrayList<String> validServceType = new ArrayList<>();
+
+    public void setValidServceType(ArrayList<String> validServceType) {
+        this.validServceType = validServceType;
+    }
+
 
     @Override
     public InstanceCreateResponse create(String serviceType, String serviceName, String compute, int cpuCores, int memory, int storage, int nodes, String accessToken) {
         //返回结果
         InstanceCreateResponse instanceCreateResponse = new InstanceCreateResponse();
+        if (!this.validServceType.contains(serviceType)){
+            instanceCreateResponse.setTaskStatus(0);
+            instanceCreateResponse.setErrorCode(BusinessErrorCode.ILLEGAL_SERVICE_TYPE.getValue());
+            instanceCreateResponse.setErrorMsg(BusinessErrorCode.ILLEGAL_SERVICE_TYPE.getDesc());
+            return instanceCreateResponse;
+        }
+
         boolean b = checkMemory(serviceType, compute, memory);
         //判断内存限制 02002 ，01006 内存只能为  [2048, 4096, 6144, 8192]
         if (b){
@@ -61,12 +75,19 @@ public class InstanceImpl implements IInstance {
             if (deployAppVersionOutput.getRetCode()==0) {
                 logger.info("创建实例请求 :  成功 ");
                 instanceCreateResponse.setInstanceId(deployAppVersionOutput.getClusterID());
-            }else {
-                logger.info("创建实例请求 :  失败 ");
+            }else if (deployAppVersionOutput.getRetCode()==-1){
+                logger.error("创建实例请求失败: "+deployAppVersionOutput.getMessage());
                 instanceCreateResponse.setTaskStatus(0);
+                instanceCreateResponse.setReceiveStatus(0);
                 instanceCreateResponse.setErrorCode(deployAppVersionOutput.getRetCode());
-                instanceCreateResponse.setErrorMsg("创建实例失败；错误信息为："+deployAppVersionOutput.getMessage());
-                logger.debug("创建实例失败；错误信息为："+deployAppVersionOutput.getMessage());
+                instanceCreateResponse.setErrorMsg(deployAppVersionOutput.getMessage());
+                return instanceCreateResponse;
+            }else {
+                logger.error("创建实例请求失败: "+deployAppVersionOutput.getMessage());
+                instanceCreateResponse.setTaskStatus(0);
+                instanceCreateResponse.setParamsCheckResult(0);
+                instanceCreateResponse.setErrorCode(deployAppVersionOutput.getRetCode());
+                instanceCreateResponse.setErrorMsg(deployAppVersionOutput.getMessage());
                 return instanceCreateResponse;
             }
             //由于01001、02001、02003都对应appv-v71be1fi，所以这里在创建这三种服务实例时，需要使用一个tag来标记这个服务实例的实际服务类型。
@@ -86,6 +107,7 @@ public class InstanceImpl implements IInstance {
                 ResourceTagPairModelList.add(resourceTagPairModel);
                 attachTagsInput.setResourceTagPairs(ResourceTagPairModelList);
                 TagService.AttachTagsOutput attachTagsOutput = tagService.attachTags(attachTagsInput);
+                logger.info("attachTagsOutput: {}", attachTagsOutput);
                 logger.info("01001、02001、02003  三种服务实例tag 标记成功");
             }
 
@@ -96,7 +118,7 @@ public class InstanceImpl implements IInstance {
 
             //根据任务id查询创建进度
             String jobID = deployAppVersionOutput.getJobID();
-            logger.info("任务id查询创建进度,任务id为："+jobID);
+            logger.info("查询创建进度,任务id为："+jobID);
             List jobIDList = new ArrayList<String>();
             jobIDList.add(jobID);
             JobService.DescribeJobsInput describeJobsInput = new JobService.DescribeJobsInput();
@@ -116,7 +138,7 @@ public class InstanceImpl implements IInstance {
                 Types.JobModel jobModel = describeJobsOutput.getJobSet().get(0);
                 //状态有   pending：等待被执行      working：执行中  failed：执行失败     successful：执行成功
                 status = jobModel.getStatus();
-                logger.info("任务id查询创建进度 :  成功 ！状态为："+status);
+                logger.info("任务{}查询创建进度 :  成功 ！状态为：{}", jobID, status);
                 if ("pending".equals(status)||"working".equals(status)){
                     Thread.sleep(5000);
                 }
@@ -124,7 +146,7 @@ public class InstanceImpl implements IInstance {
             if ("failed".equals(status)){
                 instanceCreateResponse.setTaskStatus(0);
                 instanceCreateResponse.setErrorCode(describeJobsOutput.getRetCode());
-                instanceCreateResponse.setErrorMsg("查询任务执行中任务创建实例失败；错误信息为："+describeJobsOutput.getMessage());
+                instanceCreateResponse.setErrorMsg("任务创建实例失败");
                 logger.info("查询任务执行中任务创建实例失败；错误信息为："+describeJobsOutput.getMessage());
                 return instanceCreateResponse;
             }else if ("successful".equals(status)){
@@ -155,12 +177,10 @@ public class InstanceImpl implements IInstance {
                 logger.info("获取服务接口url地址列表失败");
                 instanceCreateResponse.setServiceAPIUrls("获取服务接口url地址列表失败");
             }
-
-
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("程序错误"+e.getMessage());
+            logger.error("程序错误: "+e.getMessage());
             instanceCreateResponse.setTaskStatus(0);
+            instanceCreateResponse.setReceiveStatus(0);
             instanceCreateResponse.setErrorCode(BusinessErrorCode.ERROR.getValue());
             instanceCreateResponse.setErrorMsg(BusinessErrorCode.ERROR.getDesc());
         }
@@ -224,8 +244,17 @@ public class InstanceImpl implements IInstance {
         cluster.put("name",serviceName);
         cluster.put("description","");
         String vxnet = PropertiesUtils.getPropertiesValue(PropertiesUtils.CONFIG, "vxnet");
+        String sgId = PropertiesUtils.getPropertiesValue(PropertiesUtils.CONFIG, "security_group");
+        int INSTANCE_CLASS = Integer.parseInt(
+                PropertiesUtils.getPropertiesValue(PropertiesUtils.CONFIG, "instance_class"));
+        int VOLUME_CLASS = Integer.parseInt(
+                PropertiesUtils.getPropertiesValue(PropertiesUtils.CONFIG, "volume_class"));
         String zone = PropertiesUtils.getPropertiesValue(PropertiesUtils.CONFIG, "zone");
+        int masterInstanceClass = INSTANCE_CLASS;
+        int masterVolumeClass = VOLUME_CLASS;
+
         cluster.put("vxnet",vxnet);
+        cluster.put("security_group_id",sgId);
 
         //判断类型
         switch (serviceType){
@@ -235,17 +264,17 @@ public class InstanceImpl implements IInstance {
             case "02003":
                 CreateConf conf001 = CreateConfParam.getConf001();
                 cluster.put("global_uuid","07192219899460251");
-                MachineConf hdfsMaster = new MachineConf(2,4096,0,202,200,10);
+                MachineConf hdfsMaster = new MachineConf(2,4096,0, masterInstanceClass, masterVolumeClass,10);
                 cluster.put("hdfs-master",hdfsMaster);
                 MachineConf yarnMaster = hdfsMaster.clone();
                 cluster.put("yarn-master",yarnMaster);
                 MachineConf slave = basiceConf.clone();
-                slave.setInstance_class(202);
-                slave.setVolume_class(200);
+                slave.setInstance_class(INSTANCE_CLASS);
+                slave.setVolume_class(VOLUME_CLASS);
                 cluster.put("slave",slave);
                 MachineConf bigdataClient = hdfsMaster.clone();
-                bigdataClient.setInstance_class(101);
-                bigdataClient.setVolume_class(100);
+                bigdataClient.setInstance_class(INSTANCE_CLASS);
+                bigdataClient.setVolume_class(VOLUME_CLASS);
                 bigdataClient.setCount(1);
                 cluster.put("bigdata-client",bigdataClient);
                 conf001.setCluster(cluster);
@@ -257,7 +286,7 @@ public class InstanceImpl implements IInstance {
                 CreateConf conf01002 = CreateConfParam.getConf01002();
                 cluster.put("global_uuid","77192219899460699");
                 cluster.put("zk_service",zkService01002);
-                MachineConf hbaseMaster =new MachineConf(2,4096,0,202,0,60);
+                MachineConf hbaseMaster =new MachineConf(2,4096,0,masterInstanceClass,masterVolumeClass,60);
                 cluster.put("hbase-master",hbaseMaster);
                 MachineConf hbaseClient = hbaseMaster.clone();
                 hbaseClient.setCount(1);
@@ -265,8 +294,8 @@ public class InstanceImpl implements IInstance {
                 MachineConf hbaseHdfsMaster = hbaseMaster.clone();
                 cluster.put("hbase-hdfs-master",hbaseHdfsMaster);
                 MachineConf hbaseSlave =basiceConf.clone();
-                hbaseSlave.setVolume_class(200);
-                hbaseSlave.setInstance_class(202);
+                hbaseSlave.setVolume_class(VOLUME_CLASS);
+                hbaseSlave.setInstance_class(INSTANCE_CLASS);
                 cluster.put("hbase-slave",hbaseSlave);
                 conf01002.setCluster(cluster);
                 conf01002.setZone(zone);
@@ -277,7 +306,7 @@ public class InstanceImpl implements IInstance {
                 cluster.put("global_uuid","17192219899460880");
                 cluster.put("auto_backup_time","-1");
                 MachineConf nodes1 = basiceConf.clone();
-                nodes1.setInstance_class(202);
+                nodes1.setInstance_class(INSTANCE_CLASS);
                 cluster.put("nodes",nodes1);
                 conf01003.setCluster(cluster);
                 conf01003.setZone(zone);
@@ -289,7 +318,7 @@ public class InstanceImpl implements IInstance {
                 cluster.put("auto_backup_time","-1");
                 MachineConf node = basiceConf.clone();
                 node.setCpu(2);
-                node.setInstance_class(202);
+                node.setInstance_class(INSTANCE_CLASS);
                 cluster.put("node",node);
                 conf01004.setCluster(cluster);
                 conf01004.setZone(zone);
@@ -299,19 +328,19 @@ public class InstanceImpl implements IInstance {
                 CreateConf conf01006 = CreateConfParam.getConf01006();
                 cluster.put("global_uuid","96192219899460160");
                 MachineConf esMasterNode = basiceConf.clone();
-                esMasterNode.setInstance_class(101);
-                esMasterNode.setVolume_class(100);
+                esMasterNode.setInstance_class(INSTANCE_CLASS);
+                esMasterNode.setVolume_class(VOLUME_CLASS);
                 cluster.put("es_master_node",esMasterNode);
-                MachineConf esNode = new MachineConf(2,4096,3,202,200,90);
+                MachineConf esNode = new MachineConf(2,4096,3,masterInstanceClass,200,90);
                 cluster.put("es-node",esNode);
                 MachineConf esNode2 = esNode.clone();
                 esNode.setCount(0);
                 cluster.put("es_node_2",esNode2);
-                MachineConf esNode3 = new MachineConf(2,4096,0,101,100,300);
+                MachineConf esNode3 = new MachineConf(2,4096,0,masterInstanceClass,masterVolumeClass,300);
                 cluster.put("es_node_3",esNode3);
-                MachineConf lstNode = new MachineConf(2,4096,1,101,0,30);
+                MachineConf lstNode = new MachineConf(2,4096,1,masterInstanceClass,masterVolumeClass,30);
                 cluster.put("lst_node",lstNode);
-                MachineConf kbnNode = new MachineConf(2,4096,1,101,0,0);
+                MachineConf kbnNode = new MachineConf(2,4096,1,masterInstanceClass,masterVolumeClass,0);
                 cluster.put("kbn_node",kbnNode);
                 conf01006.setCluster(cluster);
                 conf01006.setZone(zone);
@@ -322,15 +351,15 @@ public class InstanceImpl implements IInstance {
                 CreateConf conf02002 = CreateConfParam.getConf02002();
                 cluster.put("global_uuid","66192219899461237");
                 cluster.put("zk_service",zkService02002);
-                MachineConf master = new MachineConf(2,4096,2,0,0,10);
+                MachineConf master = new MachineConf(2,4096,2,masterInstanceClass,masterVolumeClass,10);
                 cluster.put("master",master);
                 MachineConf slave1 = basiceConf.clone();
-                slave1.setInstance_class(0);
+                slave1.setInstance_class(INSTANCE_CLASS);
                 cluster.put("slave",slave1);
                 MachineConf rpc = master.clone();
                 rpc.setCount(0);
                 cluster.put("rpc",rpc);
-                MachineConf client = new MachineConf(1,1024,1,0,0,10);
+                MachineConf client = new MachineConf(1,1024,1,masterInstanceClass,masterVolumeClass,10);
                 cluster.put("client",client);
                 conf02002.setCluster(cluster);
                 conf02002.setZone(zone);
@@ -351,6 +380,7 @@ public class InstanceImpl implements IInstance {
         List instanceIdList = new ArrayList<String>();
         instanceIdList.add(instanceId);
         deleteClustersInput.setClusters(instanceIdList);
+        deleteClustersInput.setForce(1);
 
         try {
             ClusterService.DeleteClustersOutput deleteClustersOutput = clusterService.deleteClusters(deleteClustersInput);
@@ -416,6 +446,7 @@ public class InstanceImpl implements IInstance {
     @Override
     public InstanceModifyResponse modify(String instanceId, String serviceName, String serviceManagerURLs, String serviceAPIUrls, int nodes, String accessToken) {
         InstanceModifyResponse response =new InstanceModifyResponse();
+        response.setInstanceId(instanceId);
         EnvContext context = ContextHelper.getEnvContext(accessToken);
         ClusterService clusterService =null;
         if(serviceName !=null && accessToken !=null) {
@@ -644,6 +675,13 @@ public class InstanceImpl implements IInstance {
                 instanceListResponse.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
                 return instanceListResponse;
             }
+            if (!this.validServceType.contains(serviceType)){
+                instanceListResponse.setTaskStatus(0);
+                instanceListResponse.setErrorCode(BusinessErrorCode.ILLEGAL_SERVICE_TYPE.getValue());
+                instanceListResponse.setErrorMsg(BusinessErrorCode.ILLEGAL_SERVICE_TYPE.getDesc());
+                return instanceListResponse;
+            }
+
             instanceListResponse.setTaskStatus(0);
             instanceListResponse.setServiceList("");
            if(!serviceType.equals("01001") && !serviceType.equals("02001") &&  !serviceType.equals("02003") ){

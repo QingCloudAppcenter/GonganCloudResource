@@ -303,7 +303,7 @@ public class AppService {
             return this.nodeIDs;
         }
 
-        private Integer retCode;
+        private Integer retCode = -1;
 
         @JsonProperty(value = "ret_code")
         public void setRetCode(Integer retCode) {

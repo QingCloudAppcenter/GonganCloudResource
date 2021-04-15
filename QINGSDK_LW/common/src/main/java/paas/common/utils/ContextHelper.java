@@ -5,7 +5,7 @@ import com.qingcloud.sdk.config.EnvContext;
 public class ContextHelper {
 
     // 测试用的accessToken信息
-    public static String constAccessToken="UBMCZZDPMXHOFVXBKYPB|UbVExcLt0RmS0Je8TBUfUr1AiHRllkaktC6osRox";
+    public static String constAccessToken="UMKIENCEHBPRLNIXATMA|JEU18llo91Qa1Sh79ilJYHZWpXi7DOlHJl8PqYX0";
 
     /**
      * 获取查询到的EnvContext数据

@@ -16,7 +16,9 @@ public enum BusinessErrorCode {
     MEMORY_SIZE(6010,"内存范围在[2，4，6，8]GB中 "),
     NULL_REQUIED_PARA_ERROR(6011,"必填参数为空"),
     ILLEGAL_VERSION_CRROR(6012,"version参数不合法"),
-    ILLEGAL_LOCATION_CRROR(6013,"location参数不合法");
+    ILLEGAL_LOCATION_CRROR(6013,"location参数不合法"),
+    ILLEGAL_SERVICE_TYPE(6500, "serviceType参数不合法");
+
     private Integer value;
     private String desc;
 

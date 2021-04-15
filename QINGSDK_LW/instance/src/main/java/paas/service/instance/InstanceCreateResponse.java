@@ -3,8 +3,8 @@ package paas.service.instance;
 import paas.common.response.Response;
 
 public class InstanceCreateResponse extends Response {
-    private int receiveStatus;
-    private int paramsCheckResult;
+    private int receiveStatus = 1;
+    private int paramsCheckResult = 1;
     private String instanceId;
     private String serviceManageUrls;
     private String serviceAPIUrls;

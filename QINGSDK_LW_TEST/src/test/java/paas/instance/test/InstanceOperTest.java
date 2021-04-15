@@ -13,7 +13,7 @@ public class InstanceOperTest {
     public void createInstance(){
 
         InstanceImpl instance = new InstanceImpl();
-        InstanceCreateResponse response =  instance.create("02002","Qaa","0010",//0010  4-32
+        InstanceCreateResponse response =  instance.create("02002","hdfs","0010",//0010  4-32
                                     0,0,10,3, ContextHelper.constAccessToken);
         System.out.println(response);
         logger.info("------------------------");

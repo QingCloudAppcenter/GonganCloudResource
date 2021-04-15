@@ -1,6 +1,5 @@
 package paas;
 
-import paas.common.utils.ContextHelper;
 import paas.service.instance.*;
 import paas.service.resource.*;
 
@@ -8,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -22,8 +23,10 @@ public class JarTest {
 
     public static void main(String[] args) {
         JarTest jarTest = new JarTest();
-        InstanceImpl instance= new InstanceImpl();
-        ResourceImpl resourceTest = new ResourceImpl();
+        if (args.length < 2) {
+            System.out.println("请指定请求的类型参数和方法参数!");
+            System.exit(1);
+        }
         String method = args[0];
         System.out.println("-----调用类为："+method);
         System.out.println("-----调用方法为："+args[1]);
@@ -31,8 +34,7 @@ public class JarTest {
         // 使用InPutStream流读取properties文件
         BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(jarTest.getPath()+"/config.properties"));
-            System.out.println(jarTest.getPath()+"/config.properties");
+            bufferedReader = new BufferedReader(new FileReader(jarTest.getPath()+"src/main/resources/config.properties"));
             properties.load(bufferedReader);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -40,8 +42,14 @@ public class JarTest {
             e.printStackTrace();
         }
         // 获取token
-        String constAccessToken =properties.getProperty("constAccessToken");
+        String constAccessToken = properties.getProperty("constAccessToken");
         System.out.println("获取token : ***** "+ constAccessToken +" *****");
+
+        InstanceImpl instance= new InstanceImpl();
+        ArrayList<String> validServiceTypes = new ArrayList(Arrays.asList(properties.getProperty("serviceTypes").split(",")));
+        instance.setValidServceType(validServiceTypes);
+
+        ResourceImpl resourceTest = new ResourceImpl();
         // 实例
         if(method.equals("instance")){
             System.out.println("---------  实例  start   ------------");
@@ -57,6 +65,7 @@ public class JarTest {
                         ",\nstorage:"+ properties.getProperty("createStorage")+
                         ",\nnodes:"+  properties.getProperty("createNodes")+
                         ",\naccessToken:"+ properties.getProperty("constAccessToken"));
+
                 InstanceCreateResponse response = instance.create(
                         properties.getProperty("createServiceType"),
                         properties.getProperty("createServiceName"),
@@ -67,13 +76,18 @@ public class JarTest {
                         Integer.valueOf(properties.getProperty("createNodes")),
                         constAccessToken);
                 System.out.println("response: ------------------------");
-                System.out.println("taskStatus=" + response.getTaskStatus());
-                System.out.println("errorMsg="+ response.getErrorMsg());
-                System.out.println("errorCode=" + response.getErrorCode());
-                System.out.println("serviceManageUrls=" + response.getServiceManageUrls());
-                System.out.println("serviceAPIUrls=" + response.getServiceAPIUrls());
-                System.out.println("instanceId=" + response.getInstanceId());
-                System.out.println("------------------------");
+                if (response.getReceiveStatus()!=1 || response.getParamsCheckResult()!=1) {
+                    System.out.println("receiveStatus=" + response.getReceiveStatus());
+                    System.out.println("paramsCheckResult=" + response.getParamsCheckResult());
+                } else {
+                    System.out.println("taskStatus=" + response.getTaskStatus());
+                    System.out.println("errorMsg="+ response.getErrorMsg());
+                    System.out.println("errorCode=" + response.getErrorCode());
+                    System.out.println("serviceManageUrls=" + response.getServiceManageUrls());
+                    System.out.println("serviceAPIUrls=" + response.getServiceAPIUrls());
+                    System.out.println("instanceId=" + response.getInstanceId());
+                    System.out.println("------------------------");
+                }
             }
             // 删除
             else if(args[1].equals("delete")){
@@ -92,8 +106,7 @@ public class JarTest {
             else if(args[1].equals("list")){
                 System.out.println("------进入 listInstance 查询实例方法------");
                 System.out.println("请求参数 ："+
-                        "serviceType:"+ properties.getProperty("instanceServiceType")+
-                        ",\naccessToken:"+ properties.getProperty("constAccessToken")+
+                        "\nserviceType:"+ properties.getProperty("instanceServiceType")+
                         ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 InstanceListResponse listresponse = instance.list(properties.getProperty("instanceServiceType"),constAccessToken);
                 System.out.println("response: ------------------------");
@@ -142,6 +155,7 @@ public class JarTest {
                         Integer.valueOf(properties.getProperty("modifyNodes")),
                         constAccessToken);
                 System.out.println("response: ------------------------");
+                System.out.println("instanceId=" + modify.getInstanceId());
                 System.out.println("taskStatus=" + modify.getTaskStatus());
                 System.out.println("errorMsg="+ modify.getErrorMsg());
                 System.out.println("errorCode=" + modify.getErrorCode());
@@ -149,7 +163,8 @@ public class JarTest {
 
             }
             System.out.println("---------  实例  end   ------------");
-        } // 服务资源
+        }
+        //////////////////////////// 服务资源
         else{
             System.out.println("---------  服务资源  start   ------------");
 
