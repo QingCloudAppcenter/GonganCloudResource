@@ -121,7 +121,6 @@ public class JarTest {
                 System.out.println("------进入 queryInstance 查询实例方法------");
                 System.out.println("请求参数 ："+
                         "instanceId:"+ properties.getProperty("queryInstanceId")+
-                        ",\naccessToken:"+ properties.getProperty("constAccessToken")+
                         ",\naccessToken:"+ properties.getProperty("constAccessToken"));
                 InstanceQueryResponse queryresponse = instance.query(properties.getProperty("queryInstanceId"),constAccessToken);
                 System.out.println("response: ------------------------");

@@ -216,10 +216,12 @@ public class ResourceImpl implements IResource{
                         queryResponse.setServiceStatus(String.valueOf(resourceModel.getServiceStatus()));
                     }
                 } else {
-                    logger.info(" 未查到信息");
+//                    logger.info(" 未查到信息");
+                    queryResponse.setTaskStatus(0);
+                    queryResponse.setErrorCode(2100);
+                    queryResponse.setErrorMsg("服务资源不存在!");
                 }
-                logger.debug(" 服务资源--查询成功");
-                queryResponse.setTaskStatus(1);
+//                logger.debug(" 服务资源--查询成功");
             }else{
                 logger.debug(" 服务资源--查询失败");
                 queryResponse.setErrorCode(describeOutput.getRetCode());

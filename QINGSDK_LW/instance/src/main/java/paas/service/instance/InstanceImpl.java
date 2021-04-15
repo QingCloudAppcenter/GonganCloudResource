@@ -642,10 +642,10 @@ public class InstanceImpl implements IInstance {
             }
 
         }else{
-            logger.info("服务实例集群规模 不可为空或小于0,main_rolec参数不能为空");
-            response.setTaskStatus(5000);
-            response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
-            response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
+//            logger.info("服务实例集群规模 不可为空或小于0,main_role参数不能为空");
+//            response.setTaskStatus(5000);
+//            response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
+//            response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
         }
         return response;
     }
