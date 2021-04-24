@@ -1,12 +1,10 @@
 package paas.service.resource;
 
-import paas.common.response.Response;
-
 /**
  * 注册
  */
 public class ResourceRegisterResponse extends Response {
-    private String serviceId;
+    private String serviceId = "";
 
 
     public String getServiceId() {

@@ -1957,15 +1957,15 @@ public class AppService {
             return this.docDir;
         }
 
-        private Integer serviceStatus;
+        private String serviceStatus;
 
         @JsonProperty(value = "service_status")
-        public void setServiceStatus(Integer serviceStatus) {
+        public void setServiceStatus(String serviceStatus) {
             this.serviceStatus = serviceStatus;
         }
 
         @JsonProperty(value = "service_status")
-        public Integer getServiceStatus() {
+        public String getServiceStatus() {
             return this.serviceStatus;
         }
 

@@ -40,20 +40,81 @@ public class ResourceImpl implements IResource{
                                              String location, Integer requsetType, String version, String group, String label,
                                              String url, String docDir, String accessToken) {
         ResourceRegisterResponse registerResponse=new ResourceRegisterResponse();
-        // 判断 location 是否合法
-        String strLocation = DataUtils.isLocation(location);
-        // 判断version 是否大于指定是数
-        Integer intVersion = DataUtils.isVersion(version, 4);
-        if(!"0".equals(strLocation)|| intVersion!=0){
-            registerResponse.setErrorCode(BusinessErrorCode.ILLEGAL_VERSION_CRROR.getValue());
-            registerResponse.setErrorMsg(BusinessErrorCode.ILLEGAL_VERSION_CRROR.getDesc());
-            if(intVersion!=0){
-                registerResponse.setErrorCode(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getValue());
-                registerResponse.setErrorMsg(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getDesc());
-            }
-            registerResponse.setTaskStatus("0");
+        if (DataUtils.outLength(serviceProvider, 64, false)) {
+            registerResponse.setTaskStatus(0);
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("serviceProvider 不合法。");
             return registerResponse;
         }
+
+        Integer[] validRequestTypes = new Integer[]{1,2,3,4};
+        List<Integer> list = Arrays.asList(validRequestTypes);
+        if (requsetType != null && !list.contains(requsetType)){
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("错误的请求类型： " + requsetType);
+            registerResponse.setTaskStatus(0);
+            return registerResponse;
+        }
+
+        // 判断 location 是否合法
+        if(!DataUtils.isLocation(location)){
+            registerResponse.setErrorCode(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getValue());
+            registerResponse.setErrorMsg(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getDesc());
+            registerResponse.setTaskStatus(0);
+            return registerResponse;
+        }
+
+        if (DataUtils.outLength(version, 4, true)) {
+            registerResponse.setTaskStatus(0);
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("version 不合法。");
+            return registerResponse;
+        }
+
+        if (DataUtils.outLength(group, 64, false)) {
+            registerResponse.setTaskStatus(0);
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("group 不合法。");
+            return registerResponse;
+        }
+
+        if (DataUtils.outLength(label, 64, false)) {
+            registerResponse.setTaskStatus(0);
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("label 不合法。");
+            return registerResponse;
+        }
+
+        if (DataUtils.outLength(url, 1024, true) || !DataUtils.isURL(url)) {
+            registerResponse.setTaskStatus(0);
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("url 不合法。");
+            return registerResponse;
+        }
+
+        if (DataUtils.outLength(docDir, 4000, false)) {
+            registerResponse.setTaskStatus(0);
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("docDir 不合法。");
+            return registerResponse;
+        }
+
+        if (docDir != null && !docDir.equals("")) {
+            if (!DataUtils.isURL(docDir)) {
+                registerResponse.setTaskStatus(0);
+                registerResponse.setErrorCode(1101);
+                registerResponse.setErrorMsg("docDir 不合法。");
+                return registerResponse;
+            }
+        }
+
+        if (DataUtils.outLength(accessToken, 128, true)) {
+            registerResponse.setTaskStatus(0);
+            registerResponse.setErrorCode(1101);
+            registerResponse.setErrorMsg("accessToken 不合法。");
+            return registerResponse;
+        }
+
         // 获取EnvContent的参数内容
         EnvContext envContext = ContextHelper.getEnvContext(accessToken);
         AppService service = new AppService(envContext);
@@ -74,18 +135,18 @@ public class ResourceImpl implements IResource{
             if(resourceOutput!=null && resourceOutput.getRetCode() ==0){
                 logger.debug(" 服务资源--注册成功");
                 registerResponse.setServiceId(resourceOutput.getServiceID());
-                registerResponse.setTaskStatus("1");
+                registerResponse.setTaskStatus(1);
                 registerResponse.setErrorCode(0);
                 registerResponse.setErrorMsg("");
             }else{
                 logger.debug(" 服务资源--注册失败");
                 registerResponse.setErrorCode(resourceOutput.getRetCode());
                 registerResponse.setErrorMsg(resourceOutput.getMessage());
-                registerResponse.setTaskStatus("0");
+                registerResponse.setTaskStatus(0);
             }
         } catch (QCException e) {
             logger.error("--请求API异常 :"+e.getMessage());
-            registerResponse.setTaskStatus("0");
+            registerResponse.setTaskStatus(0);
             registerResponse.setErrorCode(500);
             registerResponse.setErrorMsg("请求API异常 :"+e.getMessage());
         }
@@ -101,32 +162,58 @@ public class ResourceImpl implements IResource{
     @Override
     public ResourcePublishResponse publish(String serviceId, String accessToken) {
         // 返回结果
-        ResourcePublishResponse publishResponse=new ResourcePublishResponse();
+        ResourcePublishResponse publishResponse = new ResourcePublishResponse();
+        publishResponse.setServiceId(serviceId);
+
+        if (DataUtils.outLength(serviceId, 128, true)) {
+            publishResponse.setTaskStatus(0);
+            publishResponse.setErrorCode(1101);
+            publishResponse.setErrorMsg("serviceId 不合法。");
+            return publishResponse;
+        }
+
+        if (DataUtils.outLength(accessToken, 128, true)) {
+            publishResponse.setTaskStatus(0);
+            publishResponse.setErrorCode(1101);
+            publishResponse.setErrorMsg("accessToken 不合法。");
+            return publishResponse;
+        }
+
         //获取EnvContent的参数内容
-       EnvContext context = ContextHelper.getEnvContext(accessToken);
-       AppService appService  = new AppService(context);
-       AppService.PublishAppServiceResourceInput publishResourceInput = new AppService.PublishAppServiceResourceInput();
-       AppService.PublishAppServiceResourceOutput publishOutput = null;
-       try {
-           publishResourceInput.setServiceID(serviceId);
-           publishOutput = appService.publishAppServiceResource(publishResourceInput);
-           if(publishOutput!=null && publishOutput.getRetCode() ==0){
-               logger.debug(" 服务资源--发布成功");
-               publishResponse.setServiceId(publishOutput.getServiceID());
-               publishResponse.setTaskStatus("1");
-               publishResponse.setErrorCode(0);
-           }else{
-               logger.debug(" 服务资源--发布失败");
-               publishResponse.setErrorCode(publishOutput.getRetCode());
-               publishResponse.setErrorMsg(publishOutput.getMessage());
-               publishResponse.setTaskStatus("0");
-           }
-       } catch (QCException e) {
-           logger.error("--请求API异常 :"+e.getMessage());
-           publishResponse.setTaskStatus("0");
-           publishResponse.setErrorCode(500);
-           publishResponse.setErrorMsg("请求API异常 :"+e.getMessage());
-       }
+        EnvContext context = ContextHelper.getEnvContext(accessToken);
+        AppService appService = new AppService(context);
+        AppService.PublishAppServiceResourceInput publishResourceInput = new AppService.PublishAppServiceResourceInput();
+        AppService.PublishAppServiceResourceOutput publishOutput = null;
+        try {
+            publishResourceInput.setServiceID(serviceId);
+            AppService.ModifyAppServiceResourceInput input = new AppService.ModifyAppServiceResourceInput();
+            input.setServiceID(serviceId);
+            input.setServiceStatus("1");
+            AppService.ModifyAppServiceResourceOutput output = appService.modifyAppServiceResource(input);
+            if (output == null || output.getRetCode() != 0) {
+                logger.debug(" 服务资源--发布失败");
+                publishResponse.setErrorCode(output.getRetCode());
+                publishResponse.setErrorMsg("服务资源发布失败");
+                publishResponse.setTaskStatus(0);
+            }
+            publishOutput = appService.publishAppServiceResource(publishResourceInput);
+            if (publishOutput != null && publishOutput.getRetCode() == 0) {
+                logger.debug(" 服务资源--发布成功");
+                publishResponse.setServiceId(publishOutput.getServiceID());
+                publishResponse.setTaskStatus(1);
+                publishResponse.setErrorCode(0);
+            } else {
+                logger.debug(" 服务资源--发布失败");
+                publishResponse.setErrorCode(publishOutput.getRetCode());
+                publishResponse.setErrorMsg(publishOutput.getMessage());
+                publishResponse.setTaskStatus(0);
+            }
+        } catch (QCException e) {
+            logger.error("--请求API异常 :" + e.getMessage());
+            publishResponse.setTaskStatus(0);
+            publishResponse.setErrorCode(500);
+            publishResponse.setErrorMsg("请求API异常 :" + e.getMessage());
+        }
         return publishResponse;
     }
 
@@ -140,6 +227,21 @@ public class ResourceImpl implements IResource{
     public ResourceRevokeResponse revoke(String serviceId, String accessToken) {
         // 返回结果
         ResourceRevokeResponse revokeResponse = new ResourceRevokeResponse();
+        revokeResponse.setServiceId(serviceId);
+        if (DataUtils.outLength(serviceId, 128, true)) {
+            revokeResponse.setTaskStatus(0);
+            revokeResponse.setErrorCode(1101);
+            revokeResponse.setErrorMsg("serviceId 不合法。");
+            return revokeResponse;
+        }
+
+        if (DataUtils.outLength(accessToken, 128, true)) {
+            revokeResponse.setTaskStatus(0);
+            revokeResponse.setErrorCode(1101);
+            revokeResponse.setErrorMsg("accessToken 不合法。");
+            return revokeResponse;
+        }
+
         //获取EnvContent的参数内容
         EnvContext context = ContextHelper.getEnvContext(accessToken);
         AppService appService  = new AppService(context);
@@ -150,20 +252,31 @@ public class ResourceImpl implements IResource{
             revokeOutput = appService.revokeAppServiceResource(revokeResourceInput);
             // 判断是否成功
             if(revokeOutput!=null && revokeOutput.getRetCode() ==0){
+                AppService.ModifyAppServiceResourceInput input = new AppService.ModifyAppServiceResourceInput();
+                input.setServiceID(serviceId);
+                input.setServiceStatus("0");
+                AppService.ModifyAppServiceResourceOutput output = appService.modifyAppServiceResource(input);
+                if (output == null || output.getRetCode() != 0) {
+                    logger.debug(" 服务资源--撤销失败");
+                    revokeResponse.setErrorCode(output.getRetCode());
+                    revokeResponse.setErrorMsg("服务资源撤销失败");
+                    revokeResponse.setTaskStatus(0);
+                    return revokeResponse;
+                }
+
                 logger.debug(" 服务资源--撤销成功");
                 revokeResponse.setServiceId(revokeOutput.getServiceID());
-                revokeResponse.setTaskStatus("1");
+                revokeResponse.setTaskStatus(1);
                 revokeResponse.setErrorCode(0);
-                revokeResponse.setErrorMsg("");
             }else{
                 logger.debug(" 服务资源--撤销失败");
                 revokeResponse.setErrorCode(revokeOutput.getRetCode());
                 revokeResponse.setErrorMsg(revokeOutput.getMessage());
-                revokeResponse.setTaskStatus("0");
+                revokeResponse.setTaskStatus(0);
             }
         } catch (QCException e) {
             logger.error("--请求API异常 :"+e.getMessage());
-            revokeResponse.setTaskStatus("0");
+            revokeResponse.setTaskStatus(0);
             revokeResponse.setErrorCode(500);
             revokeResponse.setErrorMsg("请求API异常 :"+e.getMessage());
         }
@@ -179,6 +292,20 @@ public class ResourceImpl implements IResource{
     public ResourceQueryResponse query(String serviceId, String accessToken) {
         // 返回结果
         ResourceQueryResponse queryResponse = new ResourceQueryResponse();
+        queryResponse.setServiceId(serviceId);
+        if (DataUtils.outLength(serviceId, 128, true)) {
+            queryResponse.setTaskStatus(0);
+            queryResponse.setErrorCode(1101);
+            queryResponse.setErrorMsg("serviceId 不合法。");
+            return queryResponse;
+        }
+
+        if (DataUtils.outLength(accessToken, 128, true)) {
+            queryResponse.setTaskStatus(0);
+            queryResponse.setErrorCode(1101);
+            queryResponse.setErrorMsg("accessToken 不合法。");
+            return queryResponse;
+        }
         //获取EnvContent的参数内容
         EnvContext context = ContextHelper.getEnvContext(accessToken);
         AppService appService = new AppService(context);
@@ -205,6 +332,7 @@ public class ResourceImpl implements IResource{
                         queryResponse.setDocDir(resourceModel.getDocDir());
                         queryResponse.setErrorCode(0);
                         queryResponse.setErrorMsg("");
+                        queryResponse.setTaskStatus(1);
                         /**
                          * 如果 resourceModel.getStatus是published  那么返回  ReleaseTime 就取 statusTime 否则为空
                          * DescribeAppServiceResourcesOutput.serviceResourceSet.status是published，
@@ -217,7 +345,7 @@ public class ResourceImpl implements IResource{
                     }
                 } else {
 //                    logger.info(" 未查到信息");
-                    queryResponse.setTaskStatus("0");
+                    queryResponse.setTaskStatus(0);
                     queryResponse.setErrorCode(2100);
                     queryResponse.setErrorMsg("服务资源不存在!");
                 }
@@ -226,11 +354,11 @@ public class ResourceImpl implements IResource{
                 logger.debug(" 服务资源--查询失败");
                 queryResponse.setErrorCode(describeOutput.getRetCode());
                 queryResponse.setErrorMsg(describeOutput.getMessage());
-                queryResponse.setTaskStatus("0");
+                queryResponse.setTaskStatus(0);
             }
         } catch (QCException e) {
             logger.error("--请求API异常 :"+e.getMessage());
-            queryResponse.setTaskStatus("0");
+            queryResponse.setTaskStatus(0);
             queryResponse.setErrorCode(500);
             queryResponse.setErrorMsg("请求API异常 :"+e.getMessage());
         }
@@ -255,20 +383,89 @@ public class ResourceImpl implements IResource{
                                          String version, String group, String label, String url, String docDir, Integer serviceStatus, String accessToken) {
         ResourceModifyResponse response = new ResourceModifyResponse();
         if (serviceId !=null  && accessToken !=null){
-            // 判断 location 是否合法
-            String strLocation = DataUtils.isLocation(location);
-            // 判断version 是否大于指定是数
-            Integer intVersion = DataUtils.isVersion(version, 4);
-            if(!"0".equals(strLocation)|| intVersion!=0){
-                response.setErrorCode(BusinessErrorCode.ILLEGAL_VERSION_CRROR.getValue());
-                response.setErrorMsg(BusinessErrorCode.ILLEGAL_VERSION_CRROR.getDesc());
-                if(intVersion!=0){
-                    response.setErrorCode(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getValue());
-                    response.setErrorMsg(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getDesc());
-                }
-                response.setTaskStatus("0");
+
+            if (DataUtils.outLength(serviceId, 128, true)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("serviceId 不合法。");
                 return response;
             }
+
+            if (DataUtils.outLength(serviceProvider, 64, false)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("serviceProvider 不合法。");
+                return response;
+            }
+
+            // 判断 location 是否合法
+            if(!DataUtils.isLocation(location)){
+                response.setErrorCode(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getValue());
+                response.setErrorMsg(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getDesc());
+                response.setTaskStatus(0);
+                return response;
+            }
+
+            if (DataUtils.outLength(version, 4, true)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("version 不合法。");
+                return response;
+            }
+
+            if (DataUtils.outLength(group, 64, false)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("group 不合法。");
+                return response;
+            }
+
+            if (DataUtils.outLength(label, 64, false)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("label 不合法。");
+                return response;
+            }
+
+            if (DataUtils.outLength(url, 1023, false)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("url 不合法。");
+                return response;
+            }
+
+            if (url != null && !url.equals("")) {
+                if (!DataUtils.isURL(url)) {
+                    response.setTaskStatus(0);
+                    response.setErrorCode(1101);
+                    response.setErrorMsg("url 不合法。");
+                    return response;
+                }
+            }
+
+            if (DataUtils.outLength(docDir, 4000, false)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("docDir 不合法。");
+                return response;
+            }
+
+            if (docDir != null && !docDir.equals("")) {
+                if (!DataUtils.isURL(docDir)) {
+                    response.setTaskStatus(0);
+                    response.setErrorCode(1101);
+                    response.setErrorMsg("docDir 不合法。");
+                    return response;
+                }
+            }
+
+            if (DataUtils.outLength(accessToken, 128, true)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("accessToken 不合法。");
+                return response;
+            }
+
             //获取EnvContent的参数内容
             EnvContext context = ContextHelper.getEnvContext(accessToken);
             AppService AppService = new AppService(context);
@@ -282,29 +479,28 @@ public class ResourceImpl implements IResource{
              input.setLabel(label);
              input.setURL(url);
              input.setDocDir(docDir);
-             input.setServiceStatus(serviceStatus);
+             input.setServiceStatus(serviceStatus.toString());
             try {
                 AppService.ModifyAppServiceResourceOutput output = AppService.modifyAppServiceResource(input);
                 if(output!=null && output.getRetCode() ==0){
                     logger.debug("服务资源--修改成功！！！");
                     response.setErrorCode(output.getRetCode());
-                    response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus("1");
+                    response.setTaskStatus(1);
                 }else{
                     logger.debug("服务资源--修改失败！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus("0");
+                    response.setTaskStatus(0);
                 }
             }catch (Exception e){
                 logger.error("程序错误"+e.getMessage());
-                response.setErrorCode(0);
-                response.setTaskStatus("0");
+                response.setErrorCode(1200);
+                response.setTaskStatus(0);
                 response.setErrorMsg("程序错误"+e.getMessage());
             }
         }else{
             logger.info("服务资源唯一标识或用户令牌 不可为空");
-            response.setTaskStatus("0");
+            response.setTaskStatus(0);
             response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
             response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
         }
@@ -321,6 +517,21 @@ public class ResourceImpl implements IResource{
         ResourceUnregisterResponse response = new ResourceUnregisterResponse();
         //获取EnvContent的参数内容
         if(serviceId !=null && accessToken !=null) {
+
+            if (DataUtils.outLength(serviceId, 128, true)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("serviceId 不合法。");
+                return response;
+            }
+
+            if (DataUtils.outLength(accessToken, 128, true)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("accessToken 不合法。");
+                return response;
+            }
+
             EnvContext context = ContextHelper.getEnvContext(accessToken);
             AppService AppService = new AppService(context);
             AppService.UnregisterAppServiceResourceInput unregisterAppServiceResourceInput = new AppService.UnregisterAppServiceResourceInput();
@@ -330,23 +541,22 @@ public class ResourceImpl implements IResource{
                 if(output!=null && output.getRetCode() ==0){
                     logger.debug("服务资源--注销成功！！！");
                     response.setErrorCode(output.getRetCode());
-                    response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus("1");
+                    response.setTaskStatus(1);
                 }else{
                     logger.debug("服务资源--注销失败！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus("0");
+                    response.setTaskStatus(0);
                 }
             }catch (Exception e){
                 logger.error("程序错误"+e.getMessage());
-                response.setErrorCode(0);
-                response.setTaskStatus("0");
+                response.setErrorCode(1200);
+                response.setTaskStatus(0);
                 response.setErrorMsg("程序错误"+e.getMessage());
             }
         }else{
             logger.info("服务资源唯一标识或用户令牌 不可为空");
-            response.setTaskStatus("0");
+            response.setTaskStatus(0);
             response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
             response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
         }
@@ -366,11 +576,32 @@ public class ResourceImpl implements IResource{
         ResourceListResponse response = new ResourceListResponse();
         Integer[] validRequestTypes = new Integer[]{1,2,3,4};
         List<Integer> list = Arrays.asList(validRequestTypes);
-        if(requsetType !=null  && accessToken !=null) {
-            if (!list.contains(requsetType)){
+        if(accessToken !=null) {
+            if (requsetType != null && !list.contains(requsetType)){
                 response.setErrorCode(1101);
                 response.setErrorMsg("错误的请求类型： " + requsetType);
-                response.setTaskStatus("0");
+                response.setTaskStatus(0);
+                return response;
+            }
+
+            if (DataUtils.outLength(group, 64, false)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("group 不合法。");
+                return response;
+            }
+
+            if (DataUtils.outLength(label, 64, false)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("label 不合法。");
+                return response;
+            }
+
+            if (DataUtils.outLength(accessToken, 128, true)) {
+                response.setTaskStatus(0);
+                response.setErrorCode(1101);
+                response.setErrorMsg("accessToken 不合法。");
                 return response;
             }
 
@@ -392,23 +623,22 @@ public class ResourceImpl implements IResource{
                     }
                     response.setServiceList(listService.toString());
                     response.setErrorCode(output.getRetCode());
-                    response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus("1");
+                    response.setTaskStatus(1);
                 }else{
                     logger.debug("服务资源--获取列表失败！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus("0");
+                    response.setTaskStatus(0);
                 }
             }catch (Exception e){
                 logger.error("程序错误"+e.getMessage());
-                response.setErrorCode(0);
-                response.setTaskStatus("0");
+                response.setErrorCode(1200);
+                response.setTaskStatus(0);
                 response.setErrorMsg("程序错误"+e.getMessage());
             }
         }else {
             logger.info("服务请求类型或用户令牌 不可为空");
-            response.setTaskStatus("1");
+            response.setTaskStatus(0);
             response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
             response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
         }

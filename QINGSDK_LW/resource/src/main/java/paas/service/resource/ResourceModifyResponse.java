@@ -1,7 +1,5 @@
 package paas.service.resource;
 
-import paas.common.response.Response;
-
 public class ResourceModifyResponse extends Response {
     private String serviceId;
     private String serviceName;

@@ -30,7 +30,7 @@ public class DateUtils {
      */
     public static Long dealDateLong(String create_time) {
         long dateTime = 0l;
-        if (create_time != null && create_time != "NULL" && create_time != "") {
+        if (create_time != null && create_time != "NULL" && !create_time.equals("")) {
             if (isDate(create_time)) {
                 dateTime = 0l;
             } else {

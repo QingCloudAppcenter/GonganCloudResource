@@ -135,7 +135,7 @@ public class Test {
             modifyAppServiceResourceInput.setLabel("label2");
             modifyAppServiceResourceInput.setURL("url2");
             modifyAppServiceResourceInput.setDocDir("doc2");
-            modifyAppServiceResourceInput.setServiceStatus(1);
+            modifyAppServiceResourceInput.setServiceStatus("1");
             AppService.ModifyAppServiceResourceOutput modifyAppServiceResourceOutput = service.modifyAppServiceResource(modifyAppServiceResourceInput);
             assert modifyAppServiceResourceOutput != null;
             assert modifyAppServiceResourceOutput.getRetCode() == 0;

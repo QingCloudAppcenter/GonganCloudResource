@@ -75,7 +75,7 @@ public class ResourceTest {
         ResourceImpl resource = new ResourceImpl();
         ResourceQueryResponse response = resource.query("12121", ContextHelper.constAccessToken);
         System.out.println("------------------------");
-        if(response.getTaskStatus().equals("1")){
+        if(response.getTaskStatus() == 1){
             System.out.println("response.TaskStatus= "+response.getTaskStatus());
             System.out.println("response.ServiceId= "+response.getServiceId());
             System.out.println("response.serviceName= "+response.getServiceName());

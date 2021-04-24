@@ -1,6 +1,5 @@
 package paas.service.resource;
 
-import paas.common.response.Response;
 
 public class ResourceRevokeResponse extends Response {
     private String serviceId;
