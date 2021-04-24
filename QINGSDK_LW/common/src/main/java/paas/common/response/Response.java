@@ -1,15 +1,15 @@
 package paas.common.response;
 
 public class Response {
-    private int taskStatus;
-    private String errorMsg;
+    private String taskStatus = "0";
+    private String errorMsg = "";
     private int errorCode;
 
-    public int getTaskStatus() {
+    public String getTaskStatus() {
         return taskStatus;
     }
 
-    public void setTaskStatus(int taskStatus) {
+    public void setTaskStatus(String taskStatus) {
         this.taskStatus = taskStatus;
     }
 

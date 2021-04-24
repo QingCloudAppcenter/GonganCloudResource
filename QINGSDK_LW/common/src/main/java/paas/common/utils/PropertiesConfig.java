@@ -14,7 +14,7 @@ import java.util.Properties;
  */
 public class PropertiesConfig {
 
-	private static String fileName = System.getProperty("user.dir")+"/config/config.properties";
+	private static String fileName = "src/main/resources/config.properties";
 	/**
 	 * 根据KEY，读取文件对应的值
 	 * @param key 键

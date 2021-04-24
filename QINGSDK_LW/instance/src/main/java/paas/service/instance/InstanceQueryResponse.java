@@ -3,15 +3,15 @@ package paas.service.instance;
 import paas.common.response.Response;
 
 public class InstanceQueryResponse extends Response {
-    private String serviceType;
-    private int healthStatus;
-    private String compute;
-    private int cpuCores;
-    private int memory;
-    private int storage;
+    private String serviceType="";
+    private String healthStatus="";
+    private String compute="";
+    private String cpuCores="";
+    private String memory="";
+    private String storage="";
     private int nodes;
-    private String serviceManageUrls;
-    private String serviceAPIUrls;
+    private String serviceManageUrls="";
+    private String serviceAPIUrls="";
 
 
     public String getServiceType() {
@@ -22,11 +22,11 @@ public class InstanceQueryResponse extends Response {
         this.serviceType = serviceType;
     }
 
-    public int getHealthStatus() {
+    public String getHealthStatus() {
         return healthStatus;
     }
 
-    public void setHealthStatus(int healthStatus) {
+    public void setHealthStatus(String healthStatus) {
         this.healthStatus = healthStatus;
     }
 
@@ -38,27 +38,27 @@ public class InstanceQueryResponse extends Response {
         this.compute = compute;
     }
 
-    public int getCpuCores() {
+    public String getCpuCores() {
         return cpuCores;
     }
 
-    public void setCpuCores(int cpuCores) {
+    public void setCpuCores(String cpuCores) {
         this.cpuCores = cpuCores;
     }
 
-    public int getMemory() {
+    public String getMemory() {
         return memory;
     }
 
-    public void setMemory(int memory) {
+    public void setMemory(String memory) {
         this.memory = memory;
     }
 
-    public int getStorage() {
+    public String getStorage() {
         return storage;
     }
 
-    public void setStorage(int storage) {
+    public void setStorage(String storage) {
         this.storage = storage;
     }
 

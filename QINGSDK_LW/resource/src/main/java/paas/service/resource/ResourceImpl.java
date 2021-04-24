@@ -51,7 +51,7 @@ public class ResourceImpl implements IResource{
                 registerResponse.setErrorCode(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getValue());
                 registerResponse.setErrorMsg(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getDesc());
             }
-            registerResponse.setTaskStatus(0);
+            registerResponse.setTaskStatus("0");
             return registerResponse;
         }
         // 获取EnvContent的参数内容
@@ -74,18 +74,18 @@ public class ResourceImpl implements IResource{
             if(resourceOutput!=null && resourceOutput.getRetCode() ==0){
                 logger.debug(" 服务资源--注册成功");
                 registerResponse.setServiceId(resourceOutput.getServiceID());
-                registerResponse.setTaskStatus(1);
+                registerResponse.setTaskStatus("1");
                 registerResponse.setErrorCode(0);
                 registerResponse.setErrorMsg("");
             }else{
                 logger.debug(" 服务资源--注册失败");
                 registerResponse.setErrorCode(resourceOutput.getRetCode());
                 registerResponse.setErrorMsg(resourceOutput.getMessage());
-                registerResponse.setTaskStatus(0);
+                registerResponse.setTaskStatus("0");
             }
         } catch (QCException e) {
             logger.error("--请求API异常 :"+e.getMessage());
-            registerResponse.setTaskStatus(0);
+            registerResponse.setTaskStatus("0");
             registerResponse.setErrorCode(500);
             registerResponse.setErrorMsg("请求API异常 :"+e.getMessage());
         }
@@ -113,17 +113,17 @@ public class ResourceImpl implements IResource{
            if(publishOutput!=null && publishOutput.getRetCode() ==0){
                logger.debug(" 服务资源--发布成功");
                publishResponse.setServiceId(publishOutput.getServiceID());
-               publishResponse.setTaskStatus(1);
+               publishResponse.setTaskStatus("1");
                publishResponse.setErrorCode(0);
            }else{
                logger.debug(" 服务资源--发布失败");
                publishResponse.setErrorCode(publishOutput.getRetCode());
                publishResponse.setErrorMsg(publishOutput.getMessage());
-               publishResponse.setTaskStatus(0);
+               publishResponse.setTaskStatus("0");
            }
        } catch (QCException e) {
            logger.error("--请求API异常 :"+e.getMessage());
-           publishResponse.setTaskStatus(0);
+           publishResponse.setTaskStatus("0");
            publishResponse.setErrorCode(500);
            publishResponse.setErrorMsg("请求API异常 :"+e.getMessage());
        }
@@ -152,18 +152,18 @@ public class ResourceImpl implements IResource{
             if(revokeOutput!=null && revokeOutput.getRetCode() ==0){
                 logger.debug(" 服务资源--撤销成功");
                 revokeResponse.setServiceId(revokeOutput.getServiceID());
-                revokeResponse.setTaskStatus(1);
+                revokeResponse.setTaskStatus("1");
                 revokeResponse.setErrorCode(0);
                 revokeResponse.setErrorMsg("");
             }else{
                 logger.debug(" 服务资源--撤销失败");
                 revokeResponse.setErrorCode(revokeOutput.getRetCode());
                 revokeResponse.setErrorMsg(revokeOutput.getMessage());
-                revokeResponse.setTaskStatus(0);
+                revokeResponse.setTaskStatus("0");
             }
         } catch (QCException e) {
             logger.error("--请求API异常 :"+e.getMessage());
-            revokeResponse.setTaskStatus(0);
+            revokeResponse.setTaskStatus("0");
             revokeResponse.setErrorCode(500);
             revokeResponse.setErrorMsg("请求API异常 :"+e.getMessage());
         }
@@ -217,7 +217,7 @@ public class ResourceImpl implements IResource{
                     }
                 } else {
 //                    logger.info(" 未查到信息");
-                    queryResponse.setTaskStatus(0);
+                    queryResponse.setTaskStatus("0");
                     queryResponse.setErrorCode(2100);
                     queryResponse.setErrorMsg("服务资源不存在!");
                 }
@@ -226,11 +226,11 @@ public class ResourceImpl implements IResource{
                 logger.debug(" 服务资源--查询失败");
                 queryResponse.setErrorCode(describeOutput.getRetCode());
                 queryResponse.setErrorMsg(describeOutput.getMessage());
-                queryResponse.setTaskStatus(0);
+                queryResponse.setTaskStatus("0");
             }
         } catch (QCException e) {
             logger.error("--请求API异常 :"+e.getMessage());
-            queryResponse.setTaskStatus(0);
+            queryResponse.setTaskStatus("0");
             queryResponse.setErrorCode(500);
             queryResponse.setErrorMsg("请求API异常 :"+e.getMessage());
         }
@@ -266,7 +266,7 @@ public class ResourceImpl implements IResource{
                     response.setErrorCode(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getValue());
                     response.setErrorMsg(BusinessErrorCode.ILLEGAL_LOCATION_CRROR.getDesc());
                 }
-                response.setTaskStatus(0);
+                response.setTaskStatus("0");
                 return response;
             }
             //获取EnvContent的参数内容
@@ -289,22 +289,22 @@ public class ResourceImpl implements IResource{
                     logger.debug("服务资源--修改成功！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus(1);
+                    response.setTaskStatus("1");
                 }else{
                     logger.debug("服务资源--修改失败！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus(0);
+                    response.setTaskStatus("0");
                 }
             }catch (Exception e){
                 logger.error("程序错误"+e.getMessage());
                 response.setErrorCode(0);
-                response.setTaskStatus(5000);
+                response.setTaskStatus("0");
                 response.setErrorMsg("程序错误"+e.getMessage());
             }
         }else{
             logger.info("服务资源唯一标识或用户令牌 不可为空");
-            response.setTaskStatus(0);
+            response.setTaskStatus("0");
             response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
             response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
         }
@@ -331,22 +331,22 @@ public class ResourceImpl implements IResource{
                     logger.debug("服务资源--注销成功！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus(1);
+                    response.setTaskStatus("1");
                 }else{
                     logger.debug("服务资源--注销失败！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus(0);
+                    response.setTaskStatus("0");
                 }
             }catch (Exception e){
                 logger.error("程序错误"+e.getMessage());
                 response.setErrorCode(0);
-                response.setTaskStatus(5000);
+                response.setTaskStatus("0");
                 response.setErrorMsg("程序错误"+e.getMessage());
             }
         }else{
             logger.info("服务资源唯一标识或用户令牌 不可为空");
-            response.setTaskStatus(0);
+            response.setTaskStatus("0");
             response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
             response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
         }
@@ -370,7 +370,7 @@ public class ResourceImpl implements IResource{
             if (!list.contains(requsetType)){
                 response.setErrorCode(1101);
                 response.setErrorMsg("错误的请求类型： " + requsetType);
-                response.setTaskStatus(0);
+                response.setTaskStatus("0");
                 return response;
             }
 
@@ -393,22 +393,22 @@ public class ResourceImpl implements IResource{
                     response.setServiceList(listService.toString());
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus(1);
+                    response.setTaskStatus("1");
                 }else{
                     logger.debug("服务资源--获取列表失败！！！");
                     response.setErrorCode(output.getRetCode());
                     response.setErrorMsg(output.getMessage());
-                    response.setTaskStatus(0);
+                    response.setTaskStatus("0");
                 }
             }catch (Exception e){
                 logger.error("程序错误"+e.getMessage());
                 response.setErrorCode(0);
-                response.setTaskStatus(5000);
+                response.setTaskStatus("0");
                 response.setErrorMsg("程序错误"+e.getMessage());
             }
         }else {
             logger.info("服务请求类型或用户令牌 不可为空");
-            response.setTaskStatus(1);
+            response.setTaskStatus("1");
             response.setErrorCode(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getValue());
             response.setErrorMsg(BusinessErrorCode.NULL_REQUIED_PARA_ERROR.getDesc());
         }

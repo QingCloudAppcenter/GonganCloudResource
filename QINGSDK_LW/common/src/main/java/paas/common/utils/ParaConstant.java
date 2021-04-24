@@ -80,10 +80,14 @@ public class ParaConstant {
         G2Q_SERVICETYPEMAP.put("01002","appv-y0dunpcc");
         G2Q_SERVICETYPEMAP.put("01003","appv-fjjyg8ae");
         G2Q_SERVICETYPEMAP.put("01004","appv-e97gz6wz");
+        G2Q_SERVICETYPEMAP.put("01005","appv-ul7s3cvn");
+//        G2Q_SERVICETYPEMAP.put("01005","appv-ksw5ctiz");
         G2Q_SERVICETYPEMAP.put("01006","appv-dy6k7pd0");
         G2Q_SERVICETYPEMAP.put("02001","appv-v71be1fi");
         G2Q_SERVICETYPEMAP.put("02002","appv-wvbdsw6a");
         G2Q_SERVICETYPEMAP.put("02003","appv-v71be1fi");
+        G2Q_SERVICETYPEMAP.put("02004","appv-ul7s3cvn");
+//        G2Q_SERVICETYPEMAP.put("02004","appv-ksw5ctiz");
     }
 
     static{
@@ -93,7 +97,10 @@ public class ParaConstant {
         Q2G_SERVICETYPEMAP.put("appv-e97gz6wz","01004");
         Q2G_SERVICETYPEMAP.put("appv-dy6k7pd0","01006");
         Q2G_SERVICETYPEMAP.put("appv-wvbdsw6a","02002");
-
+        Q2G_SERVICETYPEMAP.put("appv-ul7s3cvn","01005");
+//        Q2G_SERVICETYPEMAP.put("appv-ksw5ctiz","01005");
+        Q2G_SERVICETYPEMAP.put("appv-ul7s3cvn","02004");
+//        Q2G_SERVICETYPEMAP.put("appv-ksw5ctiz","02004");
     }
 
     static{
@@ -102,12 +109,12 @@ public class ParaConstant {
         SERVICETYPE_MAINROLE_MAP.put("01002","hbase-slave");
         SERVICETYPE_MAINROLE_MAP.put("01003","");
         SERVICETYPE_MAINROLE_MAP.put("01004","");
-        SERVICETYPE_MAINROLE_MAP.put("01006","es_master_node");
+        SERVICETYPE_MAINROLE_MAP.put("01005","");
+        SERVICETYPE_MAINROLE_MAP.put("01006","es_node");
         SERVICETYPE_MAINROLE_MAP.put("02001","slave");
         SERVICETYPE_MAINROLE_MAP.put("02002","slave");
         SERVICETYPE_MAINROLE_MAP.put("02003","slave");
-
-
+        SERVICETYPE_MAINROLE_MAP.put("02004","");
     }
 
 }

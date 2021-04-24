@@ -74,6 +74,9 @@ public class AppService {
             input.setZone(this.zone);
         }
 
+        // for qingcloud neo4j
+//        input.setDebug(1);
+
         Object backModel = ResourceRequestFactory.getResourceRequest().sendApiRequest(context, input,DeployAppVersionOutput.class);
         if(backModel != null){
             return (DeployAppVersionOutput)backModel;

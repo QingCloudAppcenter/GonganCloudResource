@@ -15,6 +15,9 @@ public class ContextHelper {
     public static EnvContext getEnvContext(String accessToken) {
 
         String accessKeyStr[] = accessToken.split("\\|");
+        if (accessKeyStr.length != 2) {
+            return null;
+        }
         EnvContext context = new EnvContext(accessKeyStr[0], accessKeyStr[1]);
         context.setProtocol(PropertiesUtils.getPropertiesValue(PropertiesUtils.CONFIG,"protocol"));
         context.setHost(PropertiesUtils.getPropertiesValue(PropertiesUtils.CONFIG,"host"));

@@ -11079,6 +11079,30 @@ public class Types {
             return this.storageSize;
         }
 
+        private String privateIp;
+
+        @JsonProperty(value = "private_ip")
+        public void setPrivateIp(String privateIp) {
+            this.privateIp = privateIp;
+        }
+
+        @JsonProperty(value = "private_ip")
+        public String getPrivateIp() {
+            return this.privateIp;
+        }
+
+        private String nodeId;
+
+        @JsonProperty(value = "node_id")
+        public void setNodeId(String nodeId) {
+            this.nodeId = nodeId;
+        }
+
+        @JsonProperty(value = "node_id")
+        public String getNodeId() {
+            return this.nodeId;
+        }
+
         @Override
         public String validateParam() throws QCException {
             return null;

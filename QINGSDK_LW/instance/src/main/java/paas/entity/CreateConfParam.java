@@ -375,6 +375,19 @@ public class CreateConfParam {
         createConf.setEnv(getEnv01006());
         return createConf;
     }
+
+    /**
+     * 返回 图数据库 的conf信息
+     *
+     * @return CreateConf
+     */
+    public static CreateConf getConf01005(){
+        CreateConf createConf = new CreateConf();
+        createConf.setVersion("appv-ul7s3cvn");
+//        createConf.setVersion("appv-ksw5ctiz");
+        return createConf;
+    }
+
     /**
      * 返回 流式计算 的env信息
      *

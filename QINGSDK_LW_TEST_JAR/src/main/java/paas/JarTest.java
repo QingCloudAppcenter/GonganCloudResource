@@ -34,7 +34,7 @@ public class JarTest {
         // 使用InPutStream流读取properties文件
         BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(jarTest.getPath()+"src/main/resources/config.properties"));
+            bufferedReader = new BufferedReader(new FileReader("/Users/chilianyi/IdeaProject/gongan/GonganCloudResource/QINGSDK_LW_TEST_JAR/src/main/resources/config.properties"));
             properties.load(bufferedReader);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
