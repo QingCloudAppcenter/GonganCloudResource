@@ -186,16 +186,16 @@ public class ResourceImpl implements IResource{
         AppService.PublishAppServiceResourceOutput publishOutput = null;
         try {
             publishResourceInput.setServiceID(serviceId);
-            AppService.ModifyAppServiceResourceInput input = new AppService.ModifyAppServiceResourceInput();
-            input.setServiceID(serviceId);
-            input.setServiceStatus("1");
-            AppService.ModifyAppServiceResourceOutput output = appService.modifyAppServiceResource(input);
-            if (output == null || output.getRetCode() != 0) {
-                logger.debug(" 服务资源--发布失败");
-                publishResponse.setErrorCode(output.getRetCode());
-                publishResponse.setErrorMsg("服务资源发布失败");
-                publishResponse.setTaskStatus(0);
-            }
+////            AppService.ModifyAppServiceResourceInput input = new AppService.ModifyAppServiceResourceInput();
+////            input.setServiceID(serviceId);
+////            input.setServiceStatus("1");
+////            AppService.ModifyAppServiceResourceOutput output = appService.modifyAppServiceResource(input);
+////            if (output == null || output.getRetCode() != 0) {
+////                logger.debug(" 服务资源--发布失败");
+////                publishResponse.setErrorCode(output.getRetCode());
+////                publishResponse.setErrorMsg("服务资源发布失败");
+////                publishResponse.setTaskStatus(0);
+////            }
             publishOutput = appService.publishAppServiceResource(publishResourceInput);
             if (publishOutput != null && publishOutput.getRetCode() == 0) {
                 logger.debug(" 服务资源--发布成功");
@@ -252,17 +252,17 @@ public class ResourceImpl implements IResource{
             revokeOutput = appService.revokeAppServiceResource(revokeResourceInput);
             // 判断是否成功
             if(revokeOutput!=null && revokeOutput.getRetCode() ==0){
-                AppService.ModifyAppServiceResourceInput input = new AppService.ModifyAppServiceResourceInput();
-                input.setServiceID(serviceId);
-                input.setServiceStatus("0");
-                AppService.ModifyAppServiceResourceOutput output = appService.modifyAppServiceResource(input);
-                if (output == null || output.getRetCode() != 0) {
-                    logger.debug(" 服务资源--撤销失败");
-                    revokeResponse.setErrorCode(output.getRetCode());
-                    revokeResponse.setErrorMsg("服务资源撤销失败");
-                    revokeResponse.setTaskStatus(0);
-                    return revokeResponse;
-                }
+//                AppService.ModifyAppServiceResourceInput input = new AppService.ModifyAppServiceResourceInput();
+//                input.setServiceID(serviceId);
+//                input.setServiceStatus("0");
+//                AppService.ModifyAppServiceResourceOutput output = appService.modifyAppServiceResource(input);
+//                if (output == null || output.getRetCode() != 0) {
+//                    logger.debug(" 服务资源--撤销失败");
+//                    revokeResponse.setErrorCode(output.getRetCode());
+//                    revokeResponse.setErrorMsg("服务资源撤销失败");
+//                    revokeResponse.setTaskStatus(0);
+//                    return revokeResponse;
+//                }
 
                 logger.debug(" 服务资源--撤销成功");
                 revokeResponse.setServiceId(revokeOutput.getServiceID());
@@ -619,7 +619,9 @@ public class ResourceImpl implements IResource{
                     logger.debug("服务资源--获取列表成功！！！");
                     List<String> listService = new ArrayList<String>();
                     for (Types.AppServiceResourceModel service:output.getServiceResourceSet()) {
-                        listService.add(service.getServiceID());
+                        if (!service.getStatus().equals("deleted") && !service.getStatus().equals("ceased")) {
+                            listService.add(service.getServiceID());
+                        }
                     }
                     response.setServiceList(listService.toString());
                     response.setErrorCode(output.getRetCode());

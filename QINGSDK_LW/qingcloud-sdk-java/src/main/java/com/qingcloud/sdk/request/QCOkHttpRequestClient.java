@@ -141,7 +141,7 @@ public class QCOkHttpRequestClient {
         } else {
             url = String.format("%s?%s", requestUrl, uri);
         }
-        logger.debug("get url: {}", url);
+//        logger.debug("get url: {}", url);
 
         okhttp3.Request.Builder builder = new okhttp3.Request.Builder();
         builder.addHeader(QCConstant.PARAM_KEY_USER_AGENT, QCStringUtil.getUserAgent());

@@ -902,7 +902,6 @@ public class InstanceImpl implements IInstance {
                    return instanceListResponse;
                }
 
-
                List<Types.SimpleClusterModel> clusterModelList =output.getClusterSet();
                /**异常情况处理 */
                if(clusterModelList == null || clusterModelList.size() == 0){
@@ -943,11 +942,32 @@ public class InstanceImpl implements IInstance {
                    instanceListResponse.setServiceList(clusterIdList.toString());
                    return instanceListResponse;
                }
+               List<String> tagClusterIdList = new ArrayList<String>();
+
                logger.info("查询服务实例集合，其数量为："+describeTagsOutput.getTagSet().get(0).getResourceTagPairs().size());
                for (Types.ResourceTagPairModel resourceTagPair : describeTagsOutput.getTagSet().get(0).getResourceTagPairs()) {
-                   clusterIdList.add(resourceTagPair.getResourceID());
+                   tagClusterIdList.add(resourceTagPair.getResourceID());
+               }
+
+               describeClustersInput.setVerbose(1);
+               describeClustersInput.setStatus("active");
+               describeClustersInput.setClusters(tagClusterIdList);
+               SimpleClusterService.DescribeClustersOutput output = clusterService.describeClusters(describeClustersInput);
+               /**青云接口异常情况处理 */
+               if(output == null || output.getRetCode() != 0){
+                   instanceListResponse.setTaskStatus("0");
+                   instanceListResponse.setErrorCode(output.getRetCode());
+                   instanceListResponse.setErrorMsg(output.getMessage());
+                   return instanceListResponse;
+               }
+
+               List<Types.SimpleClusterModel> clusterModelList =output.getClusterSet();
+               logger.info("查询服务实例集合，其数量为："+output.getClusterSet().size());
+               for (Types.SimpleClusterModel clusterModel : clusterModelList) {
+                   clusterIdList.add(clusterModel.getClusterID());
                }
                logger.info("服务实例ID组合："+clusterIdList);
+
            }
 
             instanceListResponse.setTaskStatus("1");
@@ -1087,7 +1107,7 @@ public class InstanceImpl implements IInstance {
             }
 
             int total_size = clusterNodeModelList.size();
-            int unhealthy_size = 0;
+            double unhealthy_size = 0;
             double unhealty_percent =  0.0;
             boolean isExistMainRole = false;
             for(Types.SimpleClusterNodeModel clusterNodeModel : clusterNodeModelList){

@@ -2196,6 +2196,18 @@ public class AppService {
             return this.searchWord;
         }
 
+        private String status;
+
+        @JsonProperty(value = "status")
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        @JsonProperty(value = "status")
+        public String getStatus() {
+            return this.status;
+        }
+
         public String validateParam() throws QCException {
             return null;
         }
